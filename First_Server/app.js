@@ -3,7 +3,8 @@
 const http = require('http');
 
 function requestListener(req, res) {
-    console.log('Received req: ', req);
+    console.log('Received request: ', req);
+    process.exit(); // Exit after logging the request
 };
 
 const server = http.createServer(requestListener);
