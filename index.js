@@ -10,3 +10,5 @@ fs.writeFile("output.txt", "Performing file operations in Node.js", (err) => {
     console.log("File has been created and data written to it.");
 });
 
+
+
