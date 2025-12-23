@@ -1,1 +1,1 @@
-User details submitted successfully!
+{"username":"Prashant jain","gender":"male"}
