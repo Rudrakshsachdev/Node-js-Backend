@@ -91,6 +91,14 @@ const requestHandler = (req, res) => {
         
 
         
+    } else {
+        res.setHeader('Content-Type', 'text/html');
+        res.write('<html>');
+        res.write('<head><title>404 Not Found</title></head>');
+        res.write('<body><h1>404 - Page Not Found</h1></body>');
+        res.write('</html>');
+        res.statusCode = 404;
+        return res.end();
     }
 };
 
