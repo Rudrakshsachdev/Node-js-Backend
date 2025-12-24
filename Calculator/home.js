@@ -1,3 +1,7 @@
+// this file is all about handling requests to the home page and rendering the calculator form and processing the calculation results
+
+// We handle incoming data chunks, concatenate them, parse the full body into key-value pairs, and then write those details to the file.
+
 const http = require("http");
 const fs = require("fs");
 

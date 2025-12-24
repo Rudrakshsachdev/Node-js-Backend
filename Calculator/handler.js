@@ -1,3 +1,5 @@
+// this file is responsible for setting up the HTTP server and linking it to the request handler
+
 const http = require('http');
 
 const requestHandler = require('./home');

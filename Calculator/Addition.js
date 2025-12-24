@@ -1,3 +1,8 @@
+// this file is all about handling requests to the addition operation of the calculator and processing the addition results
+
+// We handle incoming data chunks, concatenate them, parse the full body into key-value pairs, and then write those details to the file.
+
+
 const sumRequestHandler = (req, res) => {
   console.log("Sum request received", req.url, req.method);
 
