@@ -79,15 +79,18 @@ const requestHandler = (req, res) => {
             // const BodyObject = Object.fromEntries(new URLSearchParams(fullBody)); here we directly convert URLSearchParams to object using Object.fromEntries
 
             // Writing the BodyObject to userDetails.txt as a JSON string
-            fs.writeFileSync('userDetails.txt', JSON.stringify(BodyObject));
+            fs.writeFile('userDetails.txt', JSON.stringify(BodyObject), error => {
+                console.log('Data written to file successfully.');
+                res.statusCode = 302; 
+                res.setHeader('Location', '/');
+        return res.end();
+            });
         });
 
 
         
 
-        res.statusCode = 302; 
-        res.setHeader('Location', '/');
-        return res.end();
+        
     }
 };
 

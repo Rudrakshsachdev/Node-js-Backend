@@ -1,6 +1,6 @@
 // this file is all about creating a simple server that imports the request handler from another module and starts listening on a specified port.
 
-// We import the 'http' module to create the server and the 'fs' module for file operations. The request handler is imported from the 'user.js' file.
+// We import the 'http' module to create the server and the 'fs' module for file operations. The request handler is imported from the 'user.js' file. 
 
 const http = require('http');
 
