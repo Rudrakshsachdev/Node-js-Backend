@@ -9,5 +9,8 @@
     "dev": "node app.js"
   },
   "author": "Rudraksh",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
 }
