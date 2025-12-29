@@ -1,6 +1,8 @@
 // external module
 const express = require("express");
 
+const path = require("path");
+
 const app = express();
 
 const PORT = 2025;
@@ -26,8 +28,9 @@ app.use(userRouter);
 // second route middleware
 app.use(hostRouter);
 
+// middleware to handle 404 errors
 app.use((req, res, next) => {
-    res.status(404).send("<h1>404 Not Found</h1><p>The requested resource was not found on this server.</p>");
+    res.status(404).sendFile(path.join(__dirname, "views", "404page.html"));    
 })
 
 // start the server

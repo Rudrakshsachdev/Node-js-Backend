@@ -1,4 +1,7 @@
-const express = require('express');
+//core modules
+const path = require("path");
+
+const express = require("express");
 
 const userRouter = express.Router();
 
@@ -8,9 +11,7 @@ userRouter.get("/", (req, res, next) => {
 
   //console.log(`Request Method: ${req.method}, Request URL: ${req.url}`);
 
-  res.send(`<h1>Welcome to Airbnb!</h1>   
-        <a href="/host/add-home">Add Home</a><br/>
-        `);
+  res.sendFile(path.join(__dirname, "../", "views", "home.html"));
 });
 
 module.exports = userRouter;
