@@ -1,8 +1,13 @@
 const express = require("express");
 
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 
 const app = express();
+
+const path = require("path");
+const rootDir = require("./utils/pathUtil");
+const homeRouter = require("./routes/homeRouter");
+const contactUsRouter = require("./routes/contactUs");
 
 // first middleware to log requests
 app.use((req, res, next) => {
@@ -28,25 +33,27 @@ app.use((req, res, next) => {
 
 // fourth middleware for specific route
 
-app.get("/", (req, res, next) => {
-  console.log("Handling / for GET: ", req.url, req.method);
-  res.send("<h1>Welcome to Express Deepdive</h1>");
-});
+// app.get("/", (req, res, next) => {
+//   console.log("Handling / for GET: ", req.url, req.method);
+// });
+
+app.use(homeRouter);
+app.use(contactUsRouter);
 
 //fifth middleware for another specific route
-app.get("/contact-us", (req, res, next) => {
-  console.log("Handling /contact-us for GET: ", req.url, req.method);
-  res.send(`<h1>Contact Us Page</h1>
-    <p>Please fill the form to contact us.</p>
+// app.get("/contact-us", (req, res, next) => {
+//   console.log("Handling /contact-us for GET: ", req.url, req.method);
+//   res.send(`<h1>Contact Us Page</h1>
+//     <p>Please fill the form to contact us.</p>
 
-    <form action="/contact-us" method="POST">
-      <input type="text" name="name" placeholder="Your Name" required />
-      <input type="email" name="email" placeholder="Your Email" required />
-      <input type="submit" />
-    </form>
-    
-    `);
-});
+//     <form action="/contact-us" method="POST">
+//       <input type="text" name="name" placeholder="Your Name" required />
+//       <input type="email" name="email" placeholder="Your Email" required />
+//       <input type="submit" />
+//     </form>
+
+//     `);
+// });
 
 // app.post('/contact-us', (req, res, next) => {
 //     console.log("First Handling /contact-us for POST: ", req.url, req.method);
@@ -56,11 +63,15 @@ app.get("/contact-us", (req, res, next) => {
 app.use(bodyParser.urlencoded({ extended: false }));
 
 //sixth middleware to handle POST request to /contact-us
-app.post('/contact-us', (req, res, next) => {
-    console.log("Handling /contact-us for POST: ", req.url, req.method);
+// app.post('/contact-us', (req, res, next) => {
+//     console.log("Handling /contact-us for POST: ", req.url, req.method);
 
-    res.send("<h1>Thank you for contacting us!</h1>");
+//     res.send("<h1>Thank you for contacting us!</h1>");
 
+// });
+
+app.use((req, res, next) => {
+  res.status(404).sendFile(path.join(rootDir, "views", "404page.html"));
 });
 
 const PORT = 4001;
