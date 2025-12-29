@@ -29,6 +29,9 @@ app.use(userRouter);
 // second route middleware
 app.use(hostRouter);
 
+// middleware to serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 // middleware to handle 404 errors
 app.use((req, res, next) => {
     res.status(404).sendFile(path.join(rootDir, "views", "404page.html"));    
