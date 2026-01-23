@@ -5,6 +5,12 @@ const path = require("path");
 
 const app = express();
 
+// set EJS as the templating engine
+app.set('view engine', 'ejs');
+
+// set the views directory
+app.set('views', 'views');
+
 const PORT = 2025;
 
 const userRouter = require('./routes/userRouter');
@@ -23,21 +29,21 @@ app.use((req, res, next) => {
 // middleware to parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.urlencoded({ extended: false }));
 
+// middleware to serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 // first route middleware
 app.use(userRouter);
 
 // second route middleware
 app.use(hostRouter);
 
-// middleware to serve static files
-app.use(express.static(path.join(__dirname, 'public')));
-
 // middleware to handle 404 errors
 app.use((req, res, next) => {
-    res.status(404).sendFile(path.join(rootDir, "views", "404page.html"));    
+    res.status(404).render("404page");    
 })
 
 // start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on port https://localhost:${PORT}`);
+  console.log(`Server is running on port http://localhost:${PORT}`);
 });

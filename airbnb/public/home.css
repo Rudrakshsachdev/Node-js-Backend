@@ -32,6 +32,21 @@
         font-weight: 700;
       }
 
+
+      header h2 {
+        font-size: 1.5rem;
+        color: #222;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+
+      header h3 {
+        font-size: 1.5rem;
+        color: #222;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+
       header a {
         display: inline-block;
         text-decoration: none;
