@@ -1314,6 +1314,35 @@ body {
     flex-wrap: wrap;
     gap: 0.5rem;
   }
+
+  /* Responsive Modal Overrides */
+  .modal-overlay {
+    align-items: flex-start;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  .modal-content {
+    max-height: calc(100vh - 2rem);
+  }
+
+  .modal-body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 1rem 1.25rem;
+  }
+
+  .modal-body .input-group {
+    margin-bottom: 0.85rem;
+  }
+
+  .modal-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .modal-footer {
+    padding: 0.85rem 1.25rem;
+  }
 }
 
 @media (max-width: 576px) {
