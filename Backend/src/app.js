@@ -28,23 +28,23 @@ app.get("/auth/forgot-password", (req, res) => {
   res.sendFile(path.join(__dirname, "../../Frontend/Pages/forgot-password.html"));
 });
 
-app.get("/auth/dashboard", (req, res) => {
+app.get("/dashboard", (req, res) => {
   res.sendFile(path.join(__dirname, "../../Frontend/Pages/dashboard.html"));
 });
 
-app.get("/auth/transactions", (req, res) => {
+app.get("/dashboard/transactions", (req, res) => {
   res.sendFile(path.join(__dirname, "../../Frontend/Pages/transactions.html"));
 });
 
-app.get("/auth/analytics", (req, res) => {
+app.get("/dashboard/analytics", (req, res) => {
   res.sendFile(path.join(__dirname, "../../Frontend/Pages/analytics.html"));
 });
 
-app.get("/auth/forecast", (req, res) => {
+app.get("/dashboard/forecast", (req, res) => {
   res.sendFile(path.join(__dirname, "../../Frontend/Pages/forecast.html"));
 });
 
-app.get("/auth/allowance", (req, res) => {
+app.get("/dashboard/allowance", (req, res) => {
   res.sendFile(path.join(__dirname, "../../Frontend/Pages/allowance.html"));
 });
 
@@ -82,44 +82,64 @@ app.get("/Frontend/Pages/forgot.html", (req, res) => {
   res.redirect("/auth/forgot-password");
 });
 
+app.get("/auth/dashboard", (req, res) => {
+  res.redirect("/dashboard");
+});
+
 app.get("/auth/dashboard.html", (req, res) => {
-  res.redirect("/auth/dashboard");
+  res.redirect("/dashboard");
 });
 
 app.get("/Frontend/Pages/dashboard.html", (req, res) => {
-  res.redirect("/auth/dashboard");
+  res.redirect("/dashboard");
+});
+
+app.get("/auth/transactions", (req, res) => {
+  res.redirect("/dashboard/transactions");
 });
 
 app.get("/auth/transactions.html", (req, res) => {
-  res.redirect("/auth/transactions");
+  res.redirect("/dashboard/transactions");
 });
 
 app.get("/Frontend/Pages/transactions.html", (req, res) => {
-  res.redirect("/auth/transactions");
+  res.redirect("/dashboard/transactions");
+});
+
+app.get("/auth/analytics", (req, res) => {
+  res.redirect("/dashboard/analytics");
 });
 
 app.get("/auth/analytics.html", (req, res) => {
-  res.redirect("/auth/analytics");
+  res.redirect("/dashboard/analytics");
 });
 
 app.get("/Frontend/Pages/analytics.html", (req, res) => {
-  res.redirect("/auth/analytics");
+  res.redirect("/dashboard/analytics");
+});
+
+app.get("/auth/forecast", (req, res) => {
+  res.redirect("/dashboard/forecast");
 });
 
 app.get("/auth/forecast.html", (req, res) => {
-  res.redirect("/auth/forecast");
+  res.redirect("/dashboard/forecast");
 });
 
 app.get("/Frontend/Pages/forecast.html", (req, res) => {
-  res.redirect("/auth/forecast");
+  res.redirect("/dashboard/forecast");
+});
+
+app.get("/auth/allowance", (req, res) => {
+  res.redirect("/dashboard/allowance");
 });
 
 app.get("/auth/allowance.html", (req, res) => {
-  res.redirect("/auth/allowance");
+  res.redirect("/dashboard/allowance");
 });
 
 app.get("/Frontend/Pages/allowance.html", (req, res) => {
-  res.redirect("/auth/allowance");
+  res.redirect("/dashboard/allowance");
 });
 
 // API routes

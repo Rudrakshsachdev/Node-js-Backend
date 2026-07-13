@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Redirect to dashboard after a brief delay for user feedback
         setTimeout(() => {
-          window.location.href = "dashboard.html";
+          window.location.href = "/dashboard";
         }, 1200);
         
       } else {
