@@ -1283,7 +1283,25 @@ body {
   }
 
   .tx-table {
-    min-width: 550px;
+    min-width: 460px;
+  }
+
+  .tx-table th:nth-child(2),
+  .tx-table td:nth-child(2) {
+    display: none;
+  }
+
+  .tx-table th, .tx-table td {
+    padding: 0.75rem 0.5rem !important;
+  }
+
+  .table-responsive::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb {
+    background: var(--border-muted);
+    border-radius: 2px;
   }
 
   .pagination {
