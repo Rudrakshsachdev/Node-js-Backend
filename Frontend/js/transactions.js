@@ -174,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="tx-details">
               <span class="tx-title">${tx.description}</span>
+              <span class="tx-meta">${tx.category} • ${tx.paymentMethod}</span>
             </div>
           </div>
         </td>

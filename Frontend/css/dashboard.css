@@ -1286,8 +1286,17 @@ body {
     min-width: 460px;
   }
 
-  .tx-table th:nth-child(2),
-  .tx-table td:nth-child(2) {
+  /* Hide category column on dashboard table */
+  .tx-table:not(.ledger-table) th:nth-child(2),
+  .tx-table:not(.ledger-table) td:nth-child(2) {
+    display: none;
+  }
+
+  /* Hide both category and payment method columns on ledger table */
+  .ledger-table th:nth-child(2),
+  .ledger-table td:nth-child(2),
+  .ledger-table th:nth-child(3),
+  .ledger-table td:nth-child(3) {
     display: none;
   }
 
