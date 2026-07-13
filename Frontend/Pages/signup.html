@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Your Account - ExpenseTracker</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="../css/signup.css">
+</head>
+<body>
+  <div class="glass-bg-container">
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    
+    <main class="signup-wrapper">
+      <div class="brand-section">
+        <div class="logo">
+          <i class="ph ph-wallet logo-icon"></i>
+          <span>ExpenseTracker</span>
+        </div>
+        <h1>Take Control of Your Wealth.</h1>
+        <p class="brand-subtitle">Track, analyze, and optimize your spending with an ultra-modern premium dashboard experience.</p>
+        
+        <div class="feature-bullets">
+          <div class="feature-item">
+            <div class="feature-icon"><i class="ph ph-chart-line-up"></i></div>
+            <div class="feature-text">
+              <h4>Real-time Analytics</h4>
+              <p>Watch your money flow with rich visual charts.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><i class="ph ph-shield-check"></i></div>
+            <div class="feature-text">
+              <h4>Bank-Grade Security</h4>
+              <p>Your financial records are fully encrypted and secure.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-card">
+          <div class="card-header">
+            <h2>Get Started</h2>
+            <p>Create your account in seconds</p>
+          </div>
+
+          <form id="signupForm" novalidate>
+            <!-- Name Input -->
+            <div class="input-group">
+              <label for="name">Full Name</label>
+              <div class="input-wrapper">
+                <i class="ph ph-user field-icon"></i>
+                <input type="text" id="name" placeholder="John Doe" autocomplete="name" required>
+              </div>
+              <span class="error-message" id="nameError"></span>
+            </div>
+
+            <!-- Email Input -->
+            <div class="input-group">
+              <label for="email">Email Address</label>
+              <div class="input-wrapper">
+                <i class="ph ph-envelope-simple field-icon"></i>
+                <input type="email" id="email" placeholder="john@example.com" autocomplete="email" required>
+              </div>
+              <span class="error-message" id="emailError"></span>
+            </div>
+
+            <!-- Password Input -->
+            <div class="input-group">
+              <label for="password">Password</label>
+              <div class="input-wrapper">
+                <i class="ph ph-lock field-icon"></i>
+                <input type="password" id="password" placeholder="••••••••" autocomplete="new-password" required>
+                <button type="button" id="togglePassword" class="toggle-password-btn" aria-label="Toggle Password Visibility">
+                  <i class="ph ph-eye" id="eyeIcon"></i>
+                </button>
+              </div>
+              <span class="error-message" id="passwordError"></span>
+            </div>
+
+            <!-- Password Checker UI -->
+            <div class="password-strength-container" id="strengthContainer">
+              <div class="strength-bar-wrapper">
+                <div class="strength-bar" id="strengthBar"></div>
+              </div>
+              <p class="strength-label">Password strength: <span id="strengthText">Too Weak</span></p>
+              
+              <ul class="requirements-list">
+                <li id="reqLength" class="requirement invalid">
+                  <i class="ph ph-circle-notch req-icon"></i>
+                  <span>At least 8 characters</span>
+                </li>
+                <li id="reqUppercase" class="requirement invalid">
+                  <i class="ph ph-circle-notch req-icon"></i>
+                  <span>At least 1 uppercase letter</span>
+                </li>
+                <li id="reqLowercase" class="requirement invalid">
+                  <i class="ph ph-circle-notch req-icon"></i>
+                  <span>At least 1 lowercase letter</span>
+                </li>
+                <li id="reqNumber" class="requirement invalid">
+                  <i class="ph ph-circle-notch req-icon"></i>
+                  <span>At least 1 number</span>
+                </li>
+                <li id="reqSpecial" class="requirement invalid">
+                  <i class="ph ph-circle-notch req-icon"></i>
+                  <span>At least 1 special character (@$!%*?&)</span>
+                </li>
+              </ul>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+              <span>Create Account</span>
+              <i class="ph ph-arrow-right btn-arrow"></i>
+              <div class="spinner" id="btnSpinner" style="display: none;"></div>
+            </button>
+          </form>
+
+          <div class="card-footer">
+            <p>Already have an account? <a href="#" class="login-link">Log In</a></p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Script File -->
+  <script src="../js/signup.js"></script>
+</body>
+</html>
