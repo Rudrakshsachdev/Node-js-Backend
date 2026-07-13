@@ -8,17 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- STATE ---
   let transactions = [];
-  let budgets = [
-    { category: "Food", spent: 0, limit: 400 },
-    { category: "Transportation", spent: 0, limit: 200 },
-    { category: "Shopping", spent: 0, limit: 300 },
-    { category: "Bills", spent: 0, limit: 500 },
-    { category: "Healthcare", spent: 0, limit: 150 },
-    { category: "Entertainment", spent: 0, limit: 150 },
-    { category: "Education", spent: 0, limit: 250 },
-    { category: "Travel", spent: 0, limit: 600 },
-    { category: "Other", spent: 0, limit: 200 }
-  ];
+  
+  // Load overall budget limit from localStorage if present (default to 5000)
+  let overallBudget = parseFloat(localStorage.getItem("overallBudget")) || 5000;
+
+  const saveOverallBudget = (val) => {
+    overallBudget = val;
+    localStorage.setItem("overallBudget", val);
+  };
   let goals = [
     { name: "New Laptop", current: 800, target: 1200 },
     { name: "Emergency Fund", current: 3000, target: 5000 },
@@ -124,8 +121,8 @@ document.addEventListener("DOMContentLoaded", () => {
           category: e.category,
           paymentMethod: e.paymentMethod,
           date: e.date.split("T")[0],
-          // Dynamically compute type based on category
-          type: (e.category === "Salary" || e.category === "Investment") ? "income" : "expense"
+          // Use database type field directly
+          type: e.type || ((e.category === "Salary" || e.category === "Investment") ? "income" : "expense")
         }));
         updateDashboard();
       } else {
@@ -165,50 +162,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     balance = income - expense;
 
-    // Reset budget spent
-    budgets.forEach(b => {
-      b.spent = 0;
-      budgetTotalLimit += b.limit;
-    });
-
     // Reset alerts
     alerts = [];
 
-    transactions.forEach(tx => {
-      if (tx.type === "expense") {
-        const amt = tx.amount || 0;
-        const b = budgets.find(b => b.category.toLowerCase() === tx.category.toLowerCase());
-        if (b) {
-          b.spent += amt;
-          budgetSpent += amt;
-        }
-      }
-    });
+    // Check budget thresholds for notifications based on overall budget limit
+    if (expense > overallBudget) {
+      alerts.push({
+        type: "danger",
+        message: `Overspent! You exceeded your overall budget limit by ₹${(expense - overallBudget).toFixed(0)}.`,
+        time: "Just now"
+      });
+    } else if (expense >= overallBudget * 0.85) {
+      alerts.push({
+        type: "warning",
+        message: `Warning: You spent ${Math.round((expense / overallBudget) * 100)}% of your overall budget.`,
+        time: "Just now"
+      });
+    }
 
-    // Check budget thresholds for notifications
-    budgets.forEach(b => {
-      if (b.spent > b.limit) {
-        alerts.push({
-          type: "danger",
-          message: `Overspent! You exceeded your ${b.category} budget by $${(b.spent - b.limit).toFixed(0)}.`,
-          time: "Just now"
-        });
-      } else if (b.spent >= b.limit * 0.85) {
-        alerts.push({
-          type: "warning",
-          message: `Warning: You spent ${Math.round((b.spent / b.limit) * 100)}% of your ${b.category} budget.`,
-          time: "Just now"
-        });
-      }
-    });
-
-    const budgetRemaining = Math.max(0, budgetTotalLimit - budgetSpent);
+    const budgetRemaining = Math.max(0, overallBudget - expense);
 
     // Format fields
-    kpiBalance.innerText = `$${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    kpiIncome.innerText = `$${income.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    kpiExpense.innerText = `$${expense.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    kpiBudget.innerText = `$${budgetRemaining.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    kpiBalance.innerText = `₹${balance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    kpiIncome.innerText = `₹${income.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    kpiExpense.innerText = `₹${expense.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    kpiBudget.innerText = `₹${budgetRemaining.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   // --- CHARTS ---
@@ -380,7 +358,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </td>
         <td>
           <span class="tx-amount ${tx.type === 'income' ? 'income' : 'expense'}">
-            ${tx.type === 'income' ? '+' : '-'}$${tx.amount.toFixed(2)}
+            ${tx.type === 'income' ? '+' : '-'}₹${tx.amount.toFixed(2)}
           </span>
         </td>
         <td>${tx.date}</td>
@@ -428,24 +406,39 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- BUDGETS & GOALS WIDGETS ---
   const renderBudgets = () => {
     budgetWidgetList.innerHTML = "";
-    budgets.forEach(b => {
-      const percent = Math.min(100, Math.round((b.spent / b.limit) * 100));
-      let fillClass = "";
-      if (percent >= 90) fillClass = "danger";
-      else if (percent >= 70) fillClass = "warning";
+    
+    const totalExpenses = transactions
+      .filter(tx => tx.type === "expense")
+      .reduce((sum, tx) => sum + tx.amount, 0);
 
-      budgetWidgetList.innerHTML += `
-        <div class="budget-item">
-          <div class="budget-header">
-            <span>${b.category}</span>
-            <span>$${b.spent.toFixed(0)} / $${b.limit}</span>
-          </div>
-          <div class="progress-bar-container">
-            <div class="progress-fill ${fillClass}" style="width: ${percent}%;"></div>
-          </div>
+    const percent = Math.min(100, Math.round((totalExpenses / overallBudget) * 100));
+    let fillClass = "";
+    if (percent >= 90) fillClass = "danger";
+    else if (percent >= 70) fillClass = "warning";
+
+    budgetWidgetList.innerHTML = `
+      <div class="budget-item">
+        <div class="budget-header">
+          <span>Overall Budget <button class="action-btn" id="editOverallBudgetBtn" style="display:inline-flex; padding:0 2px; font-size:0.75rem; vertical-align:middle; cursor:pointer;" title="Edit Limit"><i class="ph ph-pencil-simple"></i></button></span>
+          <span>₹${totalExpenses.toFixed(0)} / ₹${overallBudget}</span>
         </div>
-      `;
-    });
+        <div class="progress-bar-container">
+          <div class="progress-fill ${fillClass}" style="width: ${percent}%;"></div>
+        </div>
+      </div>
+    `;
+
+    // Attach click listener to edit overall budget button
+    const editBtn = document.getElementById("editOverallBudgetBtn");
+    if (editBtn) {
+      editBtn.addEventListener("click", () => {
+        const newLimit = prompt(`Enter your new overall monthly budget limit:`, overallBudget);
+        if (newLimit !== null && !isNaN(newLimit) && parseFloat(newLimit) >= 0) {
+          saveOverallBudget(parseFloat(newLimit));
+          updateDashboard();
+        }
+      });
+    }
   };
 
   const renderGoals = () => {
@@ -456,7 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="goal-item">
           <div class="goal-header">
             <span>${g.name}</span>
-            <span>$${g.current} / $${g.target} (${percent}%)</span>
+            <span>₹${g.current} / ₹${g.target} (${percent}%)</span>
           </div>
           <div class="progress-bar-container">
             <div class="progress-fill" style="width: ${percent}%;"></div>
@@ -561,6 +554,7 @@ document.addEventListener("DOMContentLoaded", () => {
       amount: amt,
       category: cat,
       paymentMethod,
+      type,
       date,
       description: desc // Fallback duplicate for schema
     };
@@ -642,6 +636,7 @@ document.addEventListener("DOMContentLoaded", () => {
       renderTransactionsTable();
     }
   });
+
 
   // Modal controls
   openTransactionModalBtn.addEventListener("click", () => {

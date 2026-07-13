@@ -5,7 +5,7 @@ const Expense = require("../models/Expense");
  */
 const addExpense = async (req, res) => {
   try {
-    const { title, amount, category, description, paymentMethod, date } = req.body;
+    const { title, amount, category, description, paymentMethod, type, date } = req.body;
 
     const newExpense = await Expense.create({
       title,
@@ -13,6 +13,7 @@ const addExpense = async (req, res) => {
       category,
       description,
       paymentMethod,
+      type,
       date,
       user: req.user.id,
     });
@@ -83,11 +84,11 @@ const getSingleExpense = async (req, res) => {
  */
 const updateExpense = async (req, res) => {
   try {
-    const { title, amount, category, description, paymentMethod, date } = req.body;
+    const { title, amount, category, description, paymentMethod, type, date } = req.body;
 
     const expense = await Expense.findOneAndUpdate(
       { _id: req.params.id, user: req.user.id },
-      { title, amount, category, description, paymentMethod, date },
+      { title, amount, category, description, paymentMethod, type, date },
       { new: true, runValidators: true }
     );
 

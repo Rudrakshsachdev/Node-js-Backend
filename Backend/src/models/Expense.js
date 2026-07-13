@@ -44,6 +44,12 @@ const expenseSchema = new mongoose.Schema({
       "Wallet"
     ],
   },
+  type: {
+    type: String,
+    required: true,
+    enum: ["income", "expense"],
+    default: "expense"
+  },
   date: {
     type: Date,
     required: true,

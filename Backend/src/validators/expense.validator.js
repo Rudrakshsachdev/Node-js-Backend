@@ -58,6 +58,13 @@ const expenseValidator = [
     .withMessage("Date is required")
     .isISO8601()
     .withMessage("Invalid date format, must be YYYY-MM-DD"),
+
+  body("type")
+    .trim()
+    .notEmpty()
+    .withMessage("Type is required")
+    .isIn(["income", "expense"])
+    .withMessage("Invalid transaction type"),
 ];
 
 module.exports = {
