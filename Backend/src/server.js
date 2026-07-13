@@ -5,7 +5,7 @@ const dotenv = require("dotenv").config();
 const app = require("./app");
 const { connectToMongoDB } = require("./config/Database");
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 async function startServer() {
   await connectToMongoDB();
