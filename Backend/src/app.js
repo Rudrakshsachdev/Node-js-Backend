@@ -32,6 +32,10 @@ app.get("/auth/dashboard", (req, res) => {
   res.sendFile(path.join(__dirname, "../../Frontend/Pages/dashboard.html"));
 });
 
+app.get("/auth/transactions", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../Frontend/Pages/transactions.html"));
+});
+
 // Alias routes to support seamless navigation between local static servers and Express
 app.get("/auth/login.html", (req, res) => {
   res.redirect("/auth/login");
@@ -71,6 +75,14 @@ app.get("/auth/dashboard.html", (req, res) => {
 
 app.get("/Frontend/Pages/dashboard.html", (req, res) => {
   res.redirect("/auth/dashboard");
+});
+
+app.get("/auth/transactions.html", (req, res) => {
+  res.redirect("/auth/transactions");
+});
+
+app.get("/Frontend/Pages/transactions.html", (req, res) => {
+  res.redirect("/auth/transactions");
 });
 
 // API routes

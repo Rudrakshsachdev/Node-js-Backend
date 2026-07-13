@@ -90,11 +90,16 @@ body {
 }
 
 .sidebar-menu {
+  flex-grow: 1;
+}
+
+.sidebar-menu ul {
   list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  flex-grow: 1;
 }
 
 .menu-item a {
@@ -432,12 +437,13 @@ body {
   border: 1px solid var(--border-muted);
   border-radius: var(--radius-sm);
   outline: none;
-  background: var(--bg-app);
+  background: #ffffff;
+  transition: var(--transition);
 }
 
 .search-input:focus {
   border-color: var(--border-focus);
-  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.05);
 }
 
 .search-icon {
@@ -448,12 +454,24 @@ body {
 }
 
 .select-filter {
-  padding: 0.5rem;
+  padding: 0.5rem 2rem 0.5rem 1rem;
   font-size: 0.85rem;
   border: 1px solid var(--border-muted);
   border-radius: var(--radius-sm);
   outline: none;
   background: #ffffff;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 0.85em;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.select-filter:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.05);
 }
 
 /* Transactions Table */
@@ -560,22 +578,29 @@ body {
 }
 
 .action-btn {
-  background: none;
-  border: none;
-  font-size: 1.05rem;
+  background: #f4f4f5;
+  border: 1px solid var(--border-muted);
+  font-size: 0.95rem;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 0.2rem;
-  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
   transition: var(--transition);
 }
 
 .action-btn:hover {
-  background: var(--border-muted);
+  background: #e4e4e7;
   color: var(--text-main);
+  border-color: var(--text-muted);
 }
 
 .action-btn.delete:hover {
+  background: #fef2f2;
+  border-color: #fee2e2;
   color: var(--expense-color);
 }
 
@@ -597,6 +622,33 @@ body {
 .pagination-buttons {
   display: flex;
   gap: 0.5rem;
+}
+
+.pagination-buttons .btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  color: var(--text-main);
+  border: 1px solid var(--border-muted);
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pagination-buttons .btn:hover:not(:disabled) {
+  background: var(--bg-app);
+  border-color: var(--border-focus);
+  color: var(--text-main);
+}
+
+.pagination-buttons .btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: #f4f4f5;
+  color: var(--text-disabled);
 }
 
 /* --- BUDGETS & GOALS TRACKING --- */
