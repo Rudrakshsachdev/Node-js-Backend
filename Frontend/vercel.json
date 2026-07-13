@@ -1,5 +1,8 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    { "source": "/", "destination": "/auth/login", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/auth/onboarding", "destination": "/Pages/signup.html" },
     { "source": "/auth/login", "destination": "/Pages/login.html" },
