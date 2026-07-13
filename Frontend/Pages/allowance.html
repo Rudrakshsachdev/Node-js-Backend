@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Pocket Money Allowance - ExpenseTracker</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <style>
+    /* Allowance Specific Styles */
+    .allowance-primary-card {
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      color: #ffffff !important;
+      border: none !important;
+    }
+    .allowance-primary-card .kpi-title,
+    .allowance-primary-card .kpi-footer {
+      color: rgba(255, 255, 255, 0.8) !important;
+    }
+    .allowance-primary-card .kpi-icon {
+      background: rgba(255, 255, 255, 0.2) !important;
+      color: #ffffff !important;
+    }
+    .allowance-primary-card.alert-mode {
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%) !important;
+    }
+    .layout-split {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    @media (max-width: 1024px) {
+      .layout-split {
+        grid-template-columns: 1fr;
+      }
+    }
+    .pacing-badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .pacing-good {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    .pacing-warning {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+    .pacing-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .tx-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border-muted);
+    }
+    .tx-item-row:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebarMenu">
+      <div class="sidebar-brand">
+        <i class="ph ph-wallet brand-icon"></i>
+        <span class="brand-name">ExpenseTracker</span>
+      </div>
+      <nav class="sidebar-menu">
+        <ul>
+          <li class="menu-item">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Overview</a>
+          </li>
+          <li class="menu-item">
+            <a href="transactions.html"><i class="ph ph-receipt"></i> Transactions</a>
+          </li>
+          <li class="menu-item">
+            <a href="analytics.html"><i class="ph ph-chart-bar"></i> Analytics</a>
+          </li>
+          <li class="menu-item">
+            <a href="forecast.html"><i class="ph ph-trend-up"></i> Forecast</a>
+          </li>
+          <li class="menu-item active">
+            <a href="allowance.html"><i class="ph ph-calendar-blank"></i> Allowance</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="userInitial">U</div>
+        <div class="user-info">
+          <span class="user-name" id="profileName">User</span>
+          <span class="user-email" id="profileEmail">user@example.com</span>
+        </div>
+        <button class="logout-btn" id="logoutBtn" title="Log Out">
+          <i class="ph ph-sign-out"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header Row -->
+      <header class="main-header">
+        <div class="header-title">
+          <h1>Pocket Money Daily Guide</h1>
+          <p>Real-time calculation of your remaining daily allowance to match your budget targets.</p>
+        </div>
+      </header>
+
+      <!-- KPI Summary Cards (5 Column Grid) -->
+      <section class="overview-grid motion-fade-up" style="grid-template-columns: repeat(5, 1fr);">
+        <!-- Safe to Spend Today -->
+        <div class="kpi-card allowance-primary-card" id="cardTodaySafe">
+          <div class="kpi-header">
+            <span class="kpi-title">Safe-to-Spend Today</span>
+            <div class="kpi-icon"><i class="ph ph-shield-check"></i></div>
+          </div>
+          <div class="kpi-value" id="kpiTodaySafe">₹0.00</div>
+          <div class="kpi-footer" id="kpiTodaySafeFooter">Target daily rate</div>
+        </div>
+        <!-- Today's Expenses -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Spent Today</span>
+            <div class="kpi-icon"><i class="ph ph-coins"></i></div>
+          </div>
+          <div class="kpi-value" id="kpiTodaySpent">₹0.00</div>
+          <div class="kpi-footer">Logged today</div>
+        </div>
+        <!-- Monthly Budget Remaining -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Monthly Limit</span>
+            <div class="kpi-icon"><i class="ph ph-wallet"></i></div>
+          </div>
+          <div class="kpi-value" id="kpiMonthLimit">₹0.00</div>
+          <div class="kpi-footer">Overall budget limit</div>
+        </div>
+        <!-- Month-to-Date Expenses -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-title">MTD Spent</span>
+            <div class="kpi-icon"><i class="ph ph-arrow-down-left"></i></div>
+          </div>
+          <div class="kpi-value" id="kpiMonthSpent">₹0.00</div>
+          <div class="kpi-footer">Total spent this month</div>
+        </div>
+        <!-- Days Left in Month -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Days Remaining</span>
+            <div class="kpi-icon"><i class="ph ph-calendar-blank"></i></div>
+          </div>
+          <div class="kpi-value" id="kpiDaysRemaining">0</div>
+          <div class="kpi-footer" id="kpiTotalDays">Of current month</div>
+        </div>
+      </section>
+
+      <!-- Bottom Layout Split -->
+      <section class="layout-split motion-fade-up delay-100">
+        
+        <!-- Today's Logged Expenses -->
+        <div class="card">
+          <div class="card-header-row" style="border-bottom: 1px solid var(--border-muted); padding-bottom: 1rem; margin-bottom: 1rem;">
+            <h2 class="card-title"><i class="ph ph-clock-counter-clockwise"></i> Today's Transactions</h2>
+            <span class="pacing-badge pacing-good" id="todayTxCount">0 logged today</span>
+          </div>
+          <div id="todayTxList">
+            <!-- Dynamically populated list of today's expenses -->
+            <p style="text-align: center; color: var(--text-muted); padding: 2rem 0;">No transactions logged today yet.</p>
+          </div>
+        </div>
+
+        <!-- Student Pacing Guide & Insights -->
+        <div class="card">
+          <h2 class="card-title" style="margin-bottom: 1.25rem;"><i class="ph ph-student"></i> Student Pacing Guide</h2>
+          <div style="display:flex; flex-direction:column; gap:1.25rem;">
+            <div>
+              <span class="pacing-badge pacing-good" id="pacingBadge">On Track</span>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem;" id="pacingAdvice">
+                You're pacing well! Stay under your daily limit to increase tomorrow's allowance.
+              </p>
+            </div>
+            
+            <div style="border-top:1px dashed var(--border-muted); padding-top:1.25rem;">
+              <span style="font-size:0.75rem; text-transform:uppercase; font-weight:600; color:var(--text-muted); letter-spacing:0.05em; display:block; margin-bottom:0.5rem;">Allowance Math Summary</span>
+              <div style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.85rem;">
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="color:var(--text-muted);">Total Pocket Money:</span>
+                  <span id="mathBudget">₹0</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="color:var(--text-muted);">Incurred this month:</span>
+                  <span id="mathSpent">₹0</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="color:var(--text-muted);">Remaining Funds:</span>
+                  <span id="mathRemaining">₹0</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-weight:600; border-top:1px solid var(--border-muted); padding-top:0.5rem;">
+                  <span>Starting Daily Rate:</span>
+                  <span id="mathDailyStart">₹0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Script File -->
+  <script src="../js/allowance.js"></script>
+</body>
+</html>

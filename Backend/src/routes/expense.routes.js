@@ -7,6 +7,7 @@ const {
   updateExpense,
   deleteExpense,
   getExpenseForecast,
+  getPocketMoneyAllowance,
 } = require("../controllers/expense.controller");
 const { expenseValidator } = require("../validators/expense.validator");
 const { validateRequest } = require("../middlewares/validate.middleware");
@@ -19,6 +20,7 @@ router.use(authMiddleware);
 router.post("/", expenseValidator, validateRequest, addExpense);
 router.get("/", getAllExpenses);
 router.get("/forecast", getExpenseForecast);
+router.get("/allowance", getPocketMoneyAllowance);
 router.get("/:id", getSingleExpense);
 
 router.put("/:id", expenseValidator, validateRequest, updateExpense);

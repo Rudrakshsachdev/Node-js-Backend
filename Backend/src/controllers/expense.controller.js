@@ -201,6 +201,78 @@ const getExpenseForecast = async (req, res) => {
   }
 };
 
+/**
+ * Get Pocket Money Allowance metrics for students
+ */
+const getPocketMoneyAllowance = async (req, res) => {
+  try {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+
+    // Start & end of the current month
+    const startOfMonth = new Date(currentYear, currentMonth, 1);
+    const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59, 999);
+
+    // Start & end of today (local time boundary)
+    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0);
+    const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+
+    // Fetch month-to-date expenses
+    const expenses = await Expense.find({
+      user: req.user.id,
+      date: { $gte: startOfMonth, $lte: endOfMonth }
+    });
+
+    let spentThisMonth = 0;
+    let spentToday = 0;
+    const todayExpensesList = [];
+
+    expenses.forEach(tx => {
+      if (tx.type === "expense") {
+        const amt = parseFloat(tx.amount) || 0;
+        spentThisMonth += amt;
+
+        // Check if transaction is today
+        const txDate = new Date(tx.date);
+        if (txDate >= startOfToday && txDate <= endOfToday) {
+          spentToday += amt;
+          todayExpensesList.push({
+            id: tx._id,
+            title: tx.title,
+            amount: amt,
+            category: tx.category,
+            paymentMethod: tx.paymentMethod,
+            date: tx.date
+          });
+        }
+      }
+    });
+
+    const elapsedDays = today.getDate();
+    const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const remainingDays = totalDays - elapsedDays + 1; // Includes today
+
+    res.status(200).json({
+      success: true,
+      data: {
+        spentThisMonth,
+        spentToday,
+        elapsedDays,
+        remainingDays,
+        totalDays,
+        todayExpenses: todayExpensesList
+      }
+    });
+  } catch (error) {
+    console.error("Error in getPocketMoneyAllowance:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};
+
 module.exports = {
   addExpense,
   getAllExpenses,
@@ -208,5 +280,7 @@ module.exports = {
   updateExpense,
   deleteExpense,
   getExpenseForecast,
+  getPocketMoneyAllowance,
 };
+
 

@@ -44,6 +44,10 @@ app.get("/auth/forecast", (req, res) => {
   res.sendFile(path.join(__dirname, "../../Frontend/Pages/forecast.html"));
 });
 
+app.get("/auth/allowance", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../Frontend/Pages/allowance.html"));
+});
+
 // Alias routes to support seamless navigation between local static servers and Express
 app.get("/auth/login.html", (req, res) => {
   res.redirect("/auth/login");
@@ -108,6 +112,14 @@ app.get("/auth/forecast.html", (req, res) => {
 
 app.get("/Frontend/Pages/forecast.html", (req, res) => {
   res.redirect("/auth/forecast");
+});
+
+app.get("/auth/allowance.html", (req, res) => {
+  res.redirect("/auth/allowance");
+});
+
+app.get("/Frontend/Pages/allowance.html", (req, res) => {
+  res.redirect("/auth/allowance");
 });
 
 // API routes
