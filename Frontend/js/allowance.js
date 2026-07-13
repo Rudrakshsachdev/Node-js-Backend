@@ -219,6 +219,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 4000);
   };
 
+  // Mobile menu & backdrop toggle
+  const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
+  const sidebarMenu = document.getElementById("sidebarMenu");
+  const sidebarBackdrop = document.getElementById("sidebarBackdrop");
+
+  const openSidebar = () => {
+    if (sidebarMenu) sidebarMenu.classList.add("active");
+    if (sidebarBackdrop) sidebarBackdrop.classList.add("active");
+  };
+
+  const closeSidebar = () => {
+    if (sidebarMenu) sidebarMenu.classList.remove("active");
+    if (sidebarBackdrop) sidebarBackdrop.classList.remove("active");
+  };
+
+  if (sidebarToggleBtn) {
+    sidebarToggleBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (sidebarMenu && sidebarMenu.classList.contains("active")) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  if (sidebarBackdrop) {
+    sidebarBackdrop.addEventListener("click", closeSidebar);
+  }
+
   // Run
   init();
 });

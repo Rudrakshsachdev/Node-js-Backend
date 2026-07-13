@@ -463,3 +463,39 @@ body {
   transform: translateY(-8px);
   transition: var(--transition);
 }
+
+/* --- RESPONSIVE MEDIA QUERIES --- */
+@media (max-width: 768px) {
+  .glass-bg-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .form-card {
+    padding: 1.75rem 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .glass-bg-container {
+    padding: 1rem 0.75rem;
+  }
+  
+  .form-card {
+    padding: 1.5rem 1.25rem;
+    border-radius: 12px;
+  }
+
+  .brand-section h1 {
+    font-size: 1.3rem;
+  }
+
+  .submit-btn {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .signup-wrapper, .login-wrapper {
+    max-width: 100%;
+  }
+}
