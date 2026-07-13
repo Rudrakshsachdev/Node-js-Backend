@@ -74,6 +74,8 @@ app.get("/Frontend/Pages/dashboard.html", (req, res) => {
 });
 
 // API routes
+const expenseRoutes = require("./routes/expense.routes");
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/expenses", expenseRoutes);
 
 module.exports = app;
