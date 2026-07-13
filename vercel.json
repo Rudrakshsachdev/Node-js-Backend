@@ -1,0 +1,18 @@
+{
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/", "destination": "/auth/login", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/js/:path*", "destination": "/Frontend/js/:path*" },
+    { "source": "/css/:path*", "destination": "/Frontend/css/:path*" },
+    { "source": "/auth/onboarding", "destination": "/Frontend/Pages/signup.html" },
+    { "source": "/auth/login", "destination": "/Frontend/Pages/login.html" },
+    { "source": "/auth/forgot-password", "destination": "/Frontend/Pages/forgot-password.html" },
+    { "source": "/dashboard", "destination": "/Frontend/Pages/dashboard.html" },
+    { "source": "/dashboard/transactions", "destination": "/Frontend/Pages/transactions.html" },
+    { "source": "/dashboard/analytics", "destination": "/Frontend/Pages/analytics.html" },
+    { "source": "/dashboard/forecast", "destination": "/Frontend/Pages/forecast.html" },
+    { "source": "/dashboard/allowance", "destination": "/Frontend/Pages/allowance.html" }
+  ]
+}
