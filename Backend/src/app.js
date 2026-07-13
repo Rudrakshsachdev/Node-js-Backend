@@ -24,6 +24,10 @@ app.get("/auth/login", (req, res) => {
   res.sendFile(path.join(__dirname, "../../Frontend/Pages/login.html"));
 });
 
+app.get("/auth/forgot-password", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../Frontend/Pages/forgot-password.html"));
+});
+
 // Alias routes to support seamless navigation between local static servers and Express
 app.get("/auth/login.html", (req, res) => {
   res.redirect("/auth/login");
@@ -33,12 +37,28 @@ app.get("/auth/signup.html", (req, res) => {
   res.redirect("/auth/onboarding");
 });
 
+app.get("/auth/forgot", (req, res) => {
+  res.redirect("/auth/forgot-password");
+});
+
+app.get("/auth/forgot.html", (req, res) => {
+  res.redirect("/auth/forgot-password");
+});
+
+app.get("/auth/forgot-password.html", (req, res) => {
+  res.redirect("/auth/forgot-password");
+});
+
 app.get("/Frontend/Pages/signup.html", (req, res) => {
   res.redirect("/auth/onboarding");
 });
 
 app.get("/Frontend/Pages/login.html", (req, res) => {
   res.redirect("/auth/login");
+});
+
+app.get("/Frontend/Pages/forgot.html", (req, res) => {
+  res.redirect("/auth/forgot-password");
 });
 
 // API routes
