@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let passwordResetToken = "";
 
   // API Endpoints
-  const BASE_URL = "http://localhost:3000/api/v1/auth";
+  const BASE_URL = `${CONFIG.API_BASE_URL}/api/v1/auth`;
   const FORGOT_URL = `${BASE_URL}/forgot-password`;
   const VERIFY_URL = `${BASE_URL}/verify-otp`;
   const RESET_URL = `${BASE_URL}/reset-password`;

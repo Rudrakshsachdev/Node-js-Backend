@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const simDesc = document.getElementById("simDesc");
   const simOutputBox = document.getElementById("simOutputBox");
 
-  const API_URL = "http://localhost:3000/api/v1/expenses/forecast";
+  const API_URL = `${CONFIG.API_BASE_URL}/api/v1/expenses/forecast`;
 
   // --- INITIALIZATION ---
   const init = async () => {

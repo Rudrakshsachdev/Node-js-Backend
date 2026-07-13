@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const mathRemaining = document.getElementById("mathRemaining");
   const mathDailyStart = document.getElementById("mathDailyStart");
 
-  const API_URL = "http://localhost:3000/api/v1/expenses/allowance";
+  const API_URL = `${CONFIG.API_BASE_URL}/api/v1/expenses/allowance`;
 
   // --- INITIALIZATION ---
   const init = async () => {

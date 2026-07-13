@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let categoryChartInstance = null;
 
   // --- API CONFIG ---
-  const API_URL = "http://localhost:3000/api/v1/expenses";
+  const API_URL = `${CONFIG.API_BASE_URL}/api/v1/expenses`;
 
   // --- ELEMENT SELECTORS ---
   const greetingText = document.getElementById("greetingText");

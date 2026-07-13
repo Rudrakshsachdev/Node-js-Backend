@@ -1,0 +1,13 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/auth/onboarding", "destination": "/Pages/signup.html" },
+    { "source": "/auth/login", "destination": "/Pages/login.html" },
+    { "source": "/auth/forgot-password", "destination": "/Pages/forgot-password.html" },
+    { "source": "/dashboard", "destination": "/Pages/dashboard.html" },
+    { "source": "/dashboard/transactions", "destination": "/Pages/transactions.html" },
+    { "source": "/dashboard/analytics", "destination": "/Pages/analytics.html" },
+    { "source": "/dashboard/forecast", "destination": "/Pages/forecast.html" },
+    { "source": "/dashboard/allowance", "destination": "/Pages/allowance.html" }
+  ]
+}

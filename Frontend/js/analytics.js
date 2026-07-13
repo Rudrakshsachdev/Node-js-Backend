@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let charts = {};
 
   // --- API CONFIG ---
-  const API_URL = "http://localhost:3000/api/v1/expenses";
+  const API_URL = `${CONFIG.API_BASE_URL}/api/v1/expenses`;
 
   // --- ELEMENT SELECTORS ---
   const profileName = document.getElementById("profileName");

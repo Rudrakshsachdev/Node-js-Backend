@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const passwordError = document.getElementById("passwordError");
 
   // Backend API URL
-  const API_URL = "http://localhost:3000/api/v1/auth/onboarding";
+  const API_URL = `${CONFIG.API_BASE_URL}/api/v1/auth/onboarding`;
 
   // Password Visibility Toggle
   togglePasswordBtn.addEventListener("click", () => {
