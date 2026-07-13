@@ -140,10 +140,73 @@ const deleteExpense = async (req, res) => {
   }
 };
 
+/**
+ * Get spending velocity and projected month-end forecast
+ */
+const getExpenseForecast = async (req, res) => {
+  try {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth(); // 0-indexed
+
+    // Start and end of the current month
+    const startOfMonth = new Date(currentYear, currentMonth, 1);
+    const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59, 999);
+
+    // Fetch all current-month transactions (both income and expense)
+    const expenses = await Expense.find({
+      user: req.user.id,
+      date: { $gte: startOfMonth, $lte: endOfMonth }
+    });
+
+    let spentSoFar = 0;
+    let incomeSoFar = 0;
+
+    expenses.forEach(tx => {
+      const amt = parseFloat(tx.amount) || 0;
+      if (tx.type === "income") {
+        incomeSoFar += amt;
+      } else {
+        spentSoFar += amt;
+      }
+    });
+
+    const elapsedDays = today.getDate();
+    const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const remainingDays = totalDays - elapsedDays;
+
+    const dailyRate = elapsedDays > 0 ? (spentSoFar / elapsedDays) : 0;
+    const projectedRemaining = dailyRate * remainingDays;
+    const forecastedExpenses = spentSoFar + projectedRemaining;
+
+    res.status(200).json({
+      success: true,
+      data: {
+        spentSoFar,
+        incomeSoFar,
+        dailyRate,
+        elapsedDays,
+        remainingDays,
+        totalDays,
+        projectedRemaining,
+        forecastedExpenses
+      }
+    });
+  } catch (error) {
+    console.error("Error in getExpenseForecast:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};
+
 module.exports = {
   addExpense,
   getAllExpenses,
   getSingleExpense,
   updateExpense,
   deleteExpense,
+  getExpenseForecast,
 };
+

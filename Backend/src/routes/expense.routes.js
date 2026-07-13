@@ -6,6 +6,7 @@ const {
   getSingleExpense,
   updateExpense,
   deleteExpense,
+  getExpenseForecast,
 } = require("../controllers/expense.controller");
 const { expenseValidator } = require("../validators/expense.validator");
 const { validateRequest } = require("../middlewares/validate.middleware");
@@ -17,7 +18,9 @@ router.use(authMiddleware);
 // Routes
 router.post("/", expenseValidator, validateRequest, addExpense);
 router.get("/", getAllExpenses);
+router.get("/forecast", getExpenseForecast);
 router.get("/:id", getSingleExpense);
+
 router.put("/:id", expenseValidator, validateRequest, updateExpense);
 router.delete("/:id", deleteExpense);
 

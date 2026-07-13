@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Vacation", current: 450, target: 1500 }
   ];
   let alerts = [];
+  let lastForecastData = null;
 
   // Pagination / Filter / Search State
   let currentPage = 1;
@@ -44,6 +45,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const kpiIncome = document.getElementById("kpiIncome");
   const kpiExpense = document.getElementById("kpiExpense");
   const kpiBudget = document.getElementById("kpiBudget");
+  const kpiForecast = document.getElementById("kpiForecast");
+  const kpiForecastFooter = document.getElementById("kpiForecastFooter");
+  const forecastCard = document.getElementById("forecastCard");
+  const forecastIcon = document.getElementById("forecastIcon");
 
   const searchTx = document.getElementById("searchTx");
   const filterType = document.getElementById("filterType");
@@ -55,8 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const paginationText = document.getElementById("paginationText");
 
   const budgetWidgetList = document.getElementById("budgetWidgetList");
-  const goalsWidgetList = document.getElementById("goalsWidgetList");
-  const notificationsPanel = document.getElementById("notificationsPanel");
 
   // Modal elements
   const txModal = document.getElementById("txModal");
@@ -94,8 +97,37 @@ document.addEventListener("DOMContentLoaded", () => {
     await fetchExpenses();
   };
 
+  const showSkeletons = () => {
+    kpiBalance.innerHTML = '<span class="skeleton" style="display:inline-block; width:120px; height:28px;"></span>';
+    kpiIncome.innerHTML = '<span class="skeleton" style="display:inline-block; width:90px; height:28px;"></span>';
+    kpiExpense.innerHTML = '<span class="skeleton" style="display:inline-block; width:90px; height:28px;"></span>';
+    kpiBudget.innerHTML = '<span class="skeleton" style="display:inline-block; width:100px; height:28px;"></span>';
+    if (kpiForecast) {
+      kpiForecast.innerHTML = '<span class="skeleton" style="display:inline-block; width:110px; height:28px;"></span>';
+    }
+
+    txTableBody.innerHTML = Array(4).fill(0).map(() => `
+      <tr>
+        <td>
+          <div class="tx-info">
+            <div class="skeleton skeleton-circle"></div>
+            <div style="flex:1;">
+              <div class="skeleton skeleton-text" style="width: 60%; height:14px;"></div>
+              <div class="skeleton skeleton-text" style="width: 40%; height:10px;"></div>
+            </div>
+          </div>
+        </td>
+        <td><div class="skeleton skeleton-text" style="width: 50px; height:12px;"></div></td>
+        <td><div class="skeleton skeleton-text" style="width: 60px; height:12px;"></div></td>
+        <td><div class="skeleton skeleton-text" style="width: 80px; height:12px;"></div></td>
+        <td><div class="skeleton skeleton-circle" style="width:28px; height:28px;"></div></td>
+      </tr>
+    `).join("");
+  };
+
   // --- API CALLS ---
   const fetchExpenses = async () => {
+    showSkeletons();
     try {
       const response = await fetch(API_URL, {
         method: "GET",
@@ -125,6 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
           type: e.type || ((e.category === "Salary" || e.category === "Investment") ? "income" : "expense")
         }));
         updateDashboard();
+        await fetchForecast();
       } else {
         showToast("Error", data.message || "Failed to load expenses.", "error");
       }
@@ -134,14 +167,60 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const fetchForecast = async () => {
+    try {
+      const response = await fetch(`${API_URL}/forecast`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      if (response.ok) {
+        const resJson = await response.json();
+        if (resJson.success && resJson.data) {
+          lastForecastData = resJson.data;
+          renderForecast(resJson.data);
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching forecast:", err);
+      if (kpiForecastFooter) {
+        kpiForecastFooter.innerText = "Error loading projections";
+      }
+    }
+  };
+
+  const renderForecast = (data) => {
+    if (!kpiForecast || !forecastCard || !forecastIcon || !kpiForecastFooter) return;
+    const forecasted = data.forecastedExpenses || 0;
+    
+    kpiForecast.innerText = `₹${forecasted.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    const diff = Math.abs(overallBudget - forecasted);
+    const isOver = forecasted > overallBudget;
+
+    forecastCard.className = "kpi-card";
+    
+    if (isOver) {
+      forecastCard.classList.add("forecast-alert");
+      forecastIcon.innerHTML = `<i class="ph ph-trend-up"></i>`;
+      kpiForecastFooter.innerHTML = `<span class="trend-down">₹${diff.toFixed(0)} over budget</span> projected`;
+    } else {
+      forecastCard.classList.add("forecast-safe");
+      forecastIcon.innerHTML = `<i class="ph ph-trend-down"></i>`;
+      kpiForecastFooter.innerHTML = `<span class="trend-up">₹${diff.toFixed(0)} under budget</span> projected`;
+    }
+  };
+
   // --- DYNAMIC RENDERING ---
   const updateDashboard = () => {
     calculateKPIs();
     renderCharts();
     applyFilters();
     renderBudgets();
-    renderGoals();
-    renderNotifications();
+    if (lastForecastData) {
+      renderForecast(lastForecastData);
+    }
   };
 
   const calculateKPIs = () => {
@@ -441,43 +520,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const renderGoals = () => {
-    goalsWidgetList.innerHTML = "";
-    goals.forEach(g => {
-      const percent = Math.min(100, Math.round((g.current / g.target) * 100));
-      goalsWidgetList.innerHTML += `
-        <div class="goal-item">
-          <div class="goal-header">
-            <span>${g.name}</span>
-            <span>₹${g.current} / ₹${g.target} (${percent}%)</span>
-          </div>
-          <div class="progress-bar-container">
-            <div class="progress-fill" style="width: ${percent}%;"></div>
-          </div>
-        </div>
-      `;
-    });
-  };
-
-  const renderNotifications = () => {
-    notificationsPanel.innerHTML = "";
-    if (alerts.length === 0) {
-      notificationsPanel.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 1rem 0;">No active alerts.</p>`;
-      return;
-    }
-    alerts.forEach(a => {
-      const icon = a.type === "warning" ? "ph ph-warning-circle warning" : "ph ph-info danger";
-      notificationsPanel.innerHTML += `
-        <div class="notification-item">
-          <i class="${icon} notification-icon"></i>
-          <div class="notification-details">
-            <p>${a.message}</p>
-            <span class="notification-time">${a.time}</span>
-          </div>
-        </div>
-      `;
-    });
-  };
 
   // --- CRUD API BINDINGS ---
   const openEditModal = (id) => {

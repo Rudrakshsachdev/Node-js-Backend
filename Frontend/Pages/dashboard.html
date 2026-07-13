@@ -35,6 +35,9 @@
           <li class="menu-item">
             <a href="analytics.html"><i class="ph ph-chart-bar"></i> Analytics</a>
           </li>
+          <li class="menu-item">
+            <a href="forecast.html"><i class="ph ph-trend-up"></i> Forecast</a>
+          </li>
         </ul>
       </nav>
       <div class="sidebar-user">
@@ -69,7 +72,7 @@
       </header>
 
       <!-- KPI Summary Cards -->
-      <section class="overview-grid">
+      <section class="overview-grid motion-fade-up">
         <!-- Total Balance -->
         <div class="kpi-card">
           <div class="kpi-header">
@@ -110,10 +113,19 @@
           <div class="kpi-value" id="kpiBudget">₹0.00</div>
           <div class="kpi-footer">Of monthly budget limits</div>
         </div>
+        <!-- Month-End Forecast -->
+        <div class="kpi-card" id="forecastCard">
+          <div class="kpi-header">
+            <span class="kpi-title">Month-End Forecast</span>
+            <div class="kpi-icon" id="forecastIcon"><i class="ph ph-trend-up"></i></div>
+          </div>
+          <div class="kpi-value" id="kpiForecast">₹0.00</div>
+          <div class="kpi-footer" id="kpiForecastFooter">Loading projections...</div>
+        </div>
       </section>
 
       <!-- Interactive Charts -->
-      <section class="charts-grid">
+      <section class="charts-grid motion-fade-up delay-100">
         <!-- Main Line Chart -->
         <div class="chart-card">
           <div class="chart-card-header">
@@ -135,7 +147,7 @@
       </section>
 
       <!-- Bottom Split Columns -->
-      <section class="split-grid">
+      <section class="split-grid motion-fade-up delay-200">
         <!-- Recent Transactions Table -->
         <div class="card">
           <div class="card-header-row">
@@ -193,20 +205,6 @@
             </h2>
             <div id="budgetWidgetList">
               <!-- Dynamically populated budget progress items -->
-            </div>
-          </div>
-          <!-- Savings Goals widget -->
-          <div class="widget-card">
-            <h2 class="widget-title"><i class="ph ph-target"></i> Savings Goals</h2>
-            <div id="goalsWidgetList">
-              <!-- Dynamically populated savings goals items -->
-            </div>
-          </div>
-          <!-- Notifications panel -->
-          <div class="widget-card">
-            <h2 class="widget-title"><i class="ph ph-bell"></i> Alerts & Notifications</h2>
-            <div class="notifications-panel" id="notificationsPanel">
-              <!-- Dynamic alert notices -->
             </div>
           </div>
         </div>
