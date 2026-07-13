@@ -17,35 +17,35 @@ app.use(express.static(path.join(__dirname, "../../Frontend")));
 
 // Backend routes serving frontend views
 app.get("/auth/onboarding", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../Frontend/Pages/signup.html"));
+  res.sendFile(path.join(__dirname, "../../Frontend/signup.html"));
 });
 
 app.get("/auth/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../Frontend/Pages/login.html"));
+  res.sendFile(path.join(__dirname, "../../Frontend/login.html"));
 });
 
 app.get("/auth/forgot-password", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../Frontend/Pages/forgot-password.html"));
+  res.sendFile(path.join(__dirname, "../../Frontend/forgot-password.html"));
 });
 
 app.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../Frontend/Pages/dashboard.html"));
+  res.sendFile(path.join(__dirname, "../../Frontend/dashboard.html"));
 });
 
 app.get("/dashboard/transactions", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../Frontend/Pages/transactions.html"));
+  res.sendFile(path.join(__dirname, "../../Frontend/transactions.html"));
 });
 
 app.get("/dashboard/analytics", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../Frontend/Pages/analytics.html"));
+  res.sendFile(path.join(__dirname, "../../Frontend/analytics.html"));
 });
 
 app.get("/dashboard/forecast", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../Frontend/Pages/forecast.html"));
+  res.sendFile(path.join(__dirname, "../../Frontend/forecast.html"));
 });
 
 app.get("/dashboard/allowance", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../Frontend/Pages/allowance.html"));
+  res.sendFile(path.join(__dirname, "../../Frontend/allowance.html"));
 });
 
 // Alias routes to support seamless navigation between local static servers and Express

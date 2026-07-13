@@ -287,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (response.ok && data.success) {
         showToast("Success", "Password updated! Redirecting to login...", "success");
         setTimeout(() => {
-          window.location.href = "/auth/login";
+          window.location.href = "/login.html";
         }, 1500);
       } else {
         showToast("Reset Failed", data.message || "Password update failed.", "error");

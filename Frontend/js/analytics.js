@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Check auth token
   const token = localStorage.getItem("token");
   if (!token) {
-    window.location.href = "/auth/login";
+    window.location.href = "/login.html";
     return;
   }
 
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.status === 401) {
         localStorage.removeItem("token");
-        window.location.href = "/auth/login";
+        window.location.href = "/login.html";
         return;
       }
 
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
   logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    window.location.href = "/auth/login";
+    window.location.href = "/login.html";
   });
 
   // Toast System

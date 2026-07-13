@@ -3,15 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transactions Ledger - ExpenseTracker</title>
+  <title>Dashboard - ExpenseTracker</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Phosphor Icons -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
   <div class="app-container">
@@ -36,20 +38,20 @@
       </div>
       <nav class="sidebar-menu">
         <ul>
-          <li class="menu-item">
-            <a href="/dashboard"><i class="ph ph-squares-four"></i> Overview</a>
-          </li>
           <li class="menu-item active">
-            <a href="/dashboard/transactions"><i class="ph ph-receipt"></i> Transactions</a>
+            <a href="/dashboard.html"><i class="ph ph-squares-four"></i> Overview</a>
           </li>
           <li class="menu-item">
-            <a href="/dashboard/analytics"><i class="ph ph-chart-bar"></i> Analytics</a>
+            <a href="/transactions.html"><i class="ph ph-receipt"></i> Transactions</a>
           </li>
           <li class="menu-item">
-            <a href="/dashboard/forecast"><i class="ph ph-trend-up"></i> Forecast</a>
+            <a href="/analytics.html"><i class="ph ph-chart-bar"></i> Analytics</a>
           </li>
           <li class="menu-item">
-            <a href="/dashboard/allowance"><i class="ph ph-calendar-blank"></i> Allowance</a>
+            <a href="/forecast.html"><i class="ph ph-trend-up"></i> Forecast</a>
+          </li>
+          <li class="menu-item">
+            <a href="/allowance.html"><i class="ph ph-calendar-blank"></i> Allowance</a>
           </li>
         </ul>
       </nav>
@@ -71,8 +73,8 @@
       <!-- Top Header Row -->
       <header class="main-header">
         <div class="header-title">
-          <h1>Transaction Ledger</h1>
-          <p>Detailed historical breakdown of your recorded income and expenses.</p>
+          <h1 id="greetingText">Good morning, User</h1>
+          <p>Here is your financial status overview today.</p>
         </div>
         <div class="header-actions">
           <button class="btn btn-primary" id="openTransactionModalBtn">
@@ -84,61 +86,140 @@
         </div>
       </header>
 
-      <!-- Detailed Ledger Card -->
-      <section class="split-grid" style="grid-template-columns: 1fr; gap: 0;">
-        <div class="card" style="width: 100%;">
-          <div class="card-header-row" style="margin-bottom: 2rem;">
-            <h2 class="card-title" style="font-size: 1.25rem;">Recorded Ledger</h2>
-            <div class="toolbar" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
+      <!-- KPI Summary Cards -->
+      <section class="overview-grid motion-fade-up">
+        <!-- Total Balance -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Total Balance</span>
+            <div class="kpi-icon"><i class="ph ph-piggy-bank"></i></div>
+          </div>
+          <div class="kpi-value" id="kpiBalance">₹0.00</div>
+          <div class="kpi-footer">Net financial assets</div>
+        </div>
+        <!-- Total Income -->
+        <div class="kpi-card income">
+          <div class="kpi-header">
+            <span class="kpi-title">Total Income</span>
+            <div class="kpi-icon"><i class="ph ph-arrow-up-right"></i></div>
+          </div>
+          <div class="kpi-value" id="kpiIncome">₹0.00</div>
+          <div class="kpi-footer">
+            <span class="trend-up" id="kpiIncomeChange">+0%</span> since last month
+          </div>
+        </div>
+        <!-- Total Expenses -->
+        <div class="kpi-card expense">
+          <div class="kpi-header">
+            <span class="kpi-title">Total Expenses</span>
+            <div class="kpi-icon"><i class="ph ph-arrow-down-left"></i></div>
+          </div>
+          <div class="kpi-value" id="kpiExpense">₹0.00</div>
+          <div class="kpi-footer">
+            <span class="trend-down" id="kpiExpenseChange">+0%</span> since last month
+          </div>
+        </div>
+        <!-- Budget Health -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Budget Remaining</span>
+            <div class="kpi-icon"><i class="ph ph-shield-check"></i></div>
+          </div>
+          <div class="kpi-value" id="kpiBudget">₹0.00</div>
+          <div class="kpi-footer">Of monthly budget limits</div>
+        </div>
+        <!-- Month-End Forecast -->
+        <div class="kpi-card" id="forecastCard">
+          <div class="kpi-header">
+            <span class="kpi-title">Month-End Forecast</span>
+            <div class="kpi-icon" id="forecastIcon"><i class="ph ph-trend-up"></i></div>
+          </div>
+          <div class="kpi-value" id="kpiForecast">₹0.00</div>
+          <div class="kpi-footer" id="kpiForecastFooter">Loading projections...</div>
+        </div>
+      </section>
+
+      <!-- Interactive Charts -->
+      <section class="charts-grid motion-fade-up delay-100">
+        <!-- Main Line Chart -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h2 class="chart-card-title">Income vs Expenses Trend</h2>
+          </div>
+          <div class="chart-container">
+            <canvas id="financialChart"></canvas>
+          </div>
+        </div>
+        <!-- Category Distribution -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h2 class="chart-card-title">Expenses by Category</h2>
+          </div>
+          <div class="chart-container">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Split Columns -->
+      <section class="split-grid motion-fade-up delay-200">
+        <!-- Recent Transactions Table -->
+        <div class="card">
+          <div class="card-header-row">
+            <h2 class="card-title">Recent Transactions</h2>
+            <div class="toolbar">
               <div class="search-wrapper">
                 <i class="ph ph-magnifying-glass search-icon"></i>
-                <input type="text" class="search-input" id="detailedSearchTx" placeholder="Search description...">
+                <input type="text" class="search-input" id="searchTx" placeholder="Search description...">
               </div>
-              <select class="select-filter" id="detailedFilterType">
+              <select class="select-filter" id="filterType">
                 <option value="all">All Types</option>
                 <option value="income">Income</option>
                 <option value="expense">Expense</option>
               </select>
-              <select class="select-filter" id="detailedFilterCategory">
+              <select class="select-filter" id="filterCategory">
                 <option value="all">All Categories</option>
-                <!-- Categories loaded dynamically -->
-              </select>
-              <select class="select-filter" id="detailedFilterPayment">
-                <option value="all">All Payment Methods</option>
-                <option value="Cash">Cash</option>
-                <option value="Credit Card">Credit Card</option>
-                <option value="Debit Card">Debit Card</option>
-                <option value="UPI">UPI</option>
-                <option value="Net Banking">Net Banking</option>
-                <option value="Wallet">Wallet</option>
+                <!-- Categories will be loaded dynamically -->
               </select>
             </div>
           </div>
-
+          
           <div class="table-responsive">
             <table class="tx-table">
               <thead>
                 <tr>
                   <th>Description</th>
                   <th>Category</th>
-                  <th>Payment Method</th>
                   <th>Amount</th>
                   <th>Date</th>
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody id="detailedTxTableBody">
-                <!-- Loaded dynamically -->
+              <tbody id="txTableBody">
+                <!-- Transactions loaded dynamically -->
               </tbody>
             </table>
           </div>
 
           <!-- Pagination UI -->
           <div class="pagination">
-            <span class="pagination-text" id="detailedPaginationText">Showing 0-0 of 0</span>
+            <span class="pagination-text" id="paginationText">Showing 0-0 of 0</span>
             <div class="pagination-buttons">
-              <button class="btn" id="detailedPrevPageBtn"><i class="ph ph-caret-left"></i> Previous</button>
-              <button class="btn" id="detailedNextPageBtn">Next <i class="ph ph-caret-right"></i></button>
+              <button class="btn" id="prevPageBtn"><i class="ph ph-caret-left"></i> Previous</button>
+              <button class="btn" id="nextPageBtn">Next <i class="ph ph-caret-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Budget progress & Reminders Widgets -->
+        <div class="widget-list">
+          <!-- Budget widget -->
+          <div class="widget-card">
+            <h2 class="widget-title">
+              <i class="ph ph-chart-bar"></i> Budget Utilization
+            </h2>
+            <div id="budgetWidgetList">
+              <!-- Dynamically populated budget progress items -->
             </div>
           </div>
         </div>
@@ -234,7 +315,7 @@
   <div id="toastContainer" class="toast-container"></div>
 
   <!-- Script File -->
-  <script src="/js/config.js"></script>
-  <script src="../js/transactions.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/dashboard.js"></script>
 </body>
 </html>
