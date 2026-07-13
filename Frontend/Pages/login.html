@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - ExpenseTracker</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+  <div class="glass-bg-container">
+    <main class="login-wrapper">
+      <div class="brand-section">
+        <div class="logo">
+          <i class="ph ph-wallet logo-icon"></i>
+          <span>ExpenseTracker</span>
+        </div>
+        <h1>Welcome Back</h1>
+        <p class="brand-subtitle">Log in to track, analyze, and optimize your wealth with ease.</p>
+      </div>
+
+      <div class="form-section">
+        <div class="form-card">
+          <div class="card-header">
+            <h2>Get Started</h2>
+            <p>Access your dashboard in seconds</p>
+          </div>
+
+          <form id="loginForm" novalidate>
+            <!-- Email Input -->
+            <div class="input-group">
+              <label for="email">Email Address</label>
+              <div class="input-wrapper">
+                <i class="ph ph-envelope-simple field-icon"></i>
+                <input type="email" id="email" placeholder="john@example.com" autocomplete="email" required>
+              </div>
+              <span class="error-message" id="emailError"></span>
+            </div>
+
+            <!-- Password Input -->
+            <div class="input-group">
+              <label for="password">Password</label>
+              <div class="input-wrapper">
+                <i class="ph ph-lock field-icon"></i>
+                <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+                <button type="button" id="togglePassword" class="toggle-password-btn" aria-label="Toggle Password Visibility">
+                  <i class="ph ph-eye" id="eyeIcon"></i>
+                </button>
+              </div>
+              <span class="error-message" id="passwordError"></span>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+              <span>Sign In</span>
+              <i class="ph ph-arrow-right btn-arrow"></i>
+              <div class="spinner" id="btnSpinner" style="display: none;"></div>
+            </button>
+          </form>
+
+          <div class="card-footer">
+            <p>Don't have an account? <a href="signup.html" class="signup-link">Sign Up</a></p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Script File -->
+  <script src="../js/login.js"></script>
+</body>
+</html>
