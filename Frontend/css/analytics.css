@@ -1,0 +1,114 @@
+/* --- ANALYTICS SPECIFIC STYLING --- */
+
+.analytics-layout-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.analytics-card-full {
+  background: #ffffff;
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-premium);
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.analytics-card {
+  background: #ffffff;
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-premium);
+  flex: 1;
+  min-width: 0; /* Prevents flex children from breaking layouts */
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.analytics-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.analytics-card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+  position: relative;
+  padding-left: 0.75rem;
+}
+
+.analytics-card-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.analytics-chart-container {
+  position: relative;
+  height: 320px;
+  width: 100%;
+}
+
+.analytics-chart-container-radial {
+  position: relative;
+  height: 280px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.analytics-split-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom Card Color Modifiers */
+.savings-rate-card {
+  border-left: 4px solid var(--income-color) !important;
+}
+
+.peak-category-card {
+  border-left: 4px solid #8b5cf6 !important;
+}
+
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+  .analytics-split-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .analytics-chart-container {
+    height: 260px;
+  }
+  
+  .analytics-chart-container-radial {
+    height: 240px;
+  }
+}

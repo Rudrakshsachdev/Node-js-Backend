@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics & Insights - ExpenseTracker</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/analytics.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebarMenu">
+      <div class="sidebar-brand">
+        <i class="ph ph-wallet brand-icon"></i>
+        <span class="brand-name">ExpenseTracker</span>
+      </div>
+      <nav class="sidebar-menu">
+        <ul>
+          <li class="menu-item">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Overview</a>
+          </li>
+          <li class="menu-item">
+            <a href="transactions.html"><i class="ph ph-receipt"></i> Transactions</a>
+          </li>
+          <li class="menu-item active">
+            <a href="analytics.html"><i class="ph ph-chart-bar"></i> Analytics</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="userInitial">U</div>
+        <div class="user-info">
+          <span class="user-name" id="profileName">User</span>
+          <span class="user-email" id="profileEmail">user@example.com</span>
+        </div>
+        <button class="logout-btn" id="logoutBtn" title="Log Out">
+          <i class="ph ph-sign-out"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header Row -->
+      <header class="main-header">
+        <div class="header-title">
+          <h1 id="greetingText">Financial Analytics</h1>
+          <p>Deep-dive visual analysis of your cash flow and distribution ratios.</p>
+        </div>
+      </header>
+
+      <!-- KPI Summaries Grid -->
+      <section class="overview-grid">
+        <!-- Balance -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Net Savings Balance</span>
+            <div class="kpi-icon"><i class="ph ph-piggy-bank"></i></div>
+          </div>
+          <div class="kpi-value" id="analyticBalance">₹0.00</div>
+          <div class="kpi-footer">Accumulated capital savings</div>
+        </div>
+        <!-- Savings Rate -->
+        <div class="kpi-card savings-rate-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Savings Rate</span>
+            <div class="kpi-icon"><i class="ph ph-percent"></i></div>
+          </div>
+          <div class="kpi-value" id="analyticSavingsRate">0.0%</div>
+          <div class="kpi-footer">Percentage of income saved</div>
+        </div>
+        <!-- Average Monthly Expense -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Avg Monthly Expenses</span>
+            <div class="kpi-icon"><i class="ph ph-trend-down"></i></div>
+          </div>
+          <div class="kpi-value" id="analyticAvgExpense">₹0.00</div>
+          <div class="kpi-footer">Based on recorded history</div>
+        </div>
+        <!-- Highest Category -->
+        <div class="kpi-card peak-category-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Top Spending Area</span>
+            <div class="kpi-icon"><i class="ph ph-crown"></i></div>
+          </div>
+          <div class="kpi-value" id="analyticTopCategory">-</div>
+          <div class="kpi-footer">Highest expenditure category</div>
+        </div>
+      </section>
+
+      <!-- Analytics Charts Section -->
+      <section class="analytics-layout-grid">
+        <!-- Row 1: Line Chart (Full Width) -->
+        <div class="analytics-card-full">
+          <div class="analytics-card-header">
+            <h2 class="analytics-card-title">Monthly Income vs Expense Trend</h2>
+          </div>
+          <div class="analytics-chart-container">
+            <canvas id="incomeExpenseChartNode"></canvas>
+          </div>
+        </div>
+
+        <!-- Row 2: Split columns -->
+        <div class="analytics-split-row">
+          <!-- Category distribution doughnut -->
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <h2 class="analytics-card-title">Expense Distribution by Category</h2>
+            </div>
+            <div class="analytics-chart-container-radial">
+              <canvas id="categoryDistributionChartNode"></canvas>
+            </div>
+          </div>
+
+          <!-- Savings trend bar -->
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <h2 class="analytics-card-title">Monthly Savings Trend</h2>
+            </div>
+            <div class="analytics-chart-container">
+              <canvas id="savingsTrendChartNode"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: Split columns -->
+        <div class="analytics-split-row">
+          <!-- Payment method pie -->
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <h2 class="analytics-card-title">Payment Method Breakdown</h2>
+            </div>
+            <div class="analytics-chart-container-radial">
+              <canvas id="paymentMethodChartNode"></canvas>
+            </div>
+          </div>
+
+          <!-- Top spending horizontal bar -->
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <h2 class="analytics-card-title">Top Category Totals</h2>
+            </div>
+            <div class="analytics-chart-container">
+              <canvas id="topSpendingChartNode"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Modular Javascript Controller -->
+  <script type="module" src="../js/analytics.js"></script>
+</body>
+</html>
