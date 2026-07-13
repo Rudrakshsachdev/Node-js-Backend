@@ -21,10 +21,8 @@ const userSchema = new mongoose.Schema({
         minLength: 7
     },
 
-    timestamp: {
-        type: Date,
-        default: Date.now
-    }
+}, {
+    timestamps: true
 });
 
 const User = mongoose.model("User", userSchema);

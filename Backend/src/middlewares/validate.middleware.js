@@ -15,7 +15,7 @@ const validateRequest = (req, res, next) => {
     return res.status(400).json({
         success: false,
         message: "Validation failed",
-        errors: errors.array().map(err => ({ field: err.param, message: err.msg })),
+        errors: errors.array().map(err => ({ path: err.path || err.param, msg: err.msg })),
     });
 };
 

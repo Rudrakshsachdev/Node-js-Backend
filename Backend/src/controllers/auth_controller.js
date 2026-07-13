@@ -1,4 +1,4 @@
-const bycrpt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
@@ -6,7 +6,7 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // check if user already exists
+    // Check if user already exists (Standard query)
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -16,11 +16,10 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // hash the password
-    const hashedPassword = await bycrpt.hash(password, 10);
+    // Hash the password using correct bcrypt naming
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // create a new user
-
+    // Create a new user
     const newUser = await User.create({
       name,
       email,
@@ -35,7 +34,7 @@ const registerUser = async (req, res) => {
       updatedAt: newUser.updatedAt,
     };
 
-    // generate a token for the new user
+    // Generate a token for the new user
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -44,13 +43,17 @@ const registerUser = async (req, res) => {
       success: true,
       message: "User registered successfully",
       token,
-      user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-      },
+      user: userResponse,
     });
   } catch (error) {
+    // Handle MongoDB duplicate key error (code 11000) for race conditions
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
+    }
+
     console.error("Error registering user:", error);
     res.status(500).json({
       success: false,
