@@ -4,10 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const step2 = document.getElementById("step2");
   const step3 = document.getElementById("step3");
   
-  // Dots
-  const dot1 = document.getElementById("dot1");
-  const dot2 = document.getElementById("dot2");
-  const dot3 = document.getElementById("dot3");
+  // Indicators
+  const stepItem1 = document.getElementById("stepItem1");
+  const stepItem2 = document.getElementById("stepItem2");
+  const stepItem3 = document.getElementById("stepItem3");
+  const stepProgress = document.getElementById("stepProgress");
 
   // Step 1: Request elements
   const forgotForm = document.getElementById("forgotForm");
@@ -189,7 +190,12 @@ document.addEventListener("DOMContentLoaded", () => {
         // Transition to Step 2
         step1.classList.remove("active");
         step2.classList.add("active");
-        dot2.classList.add("active");
+        
+        // Update Indicator
+        stepItem1.classList.remove("active");
+        stepItem1.classList.add("completed");
+        stepItem2.classList.add("active");
+        stepProgress.style.width = "50%";
       } else {
         showToast("Error", data.message || "Something went wrong.", "error");
       }
@@ -233,7 +239,12 @@ document.addEventListener("DOMContentLoaded", () => {
         // Transition to Step 3
         step2.classList.remove("active");
         step3.classList.add("active");
-        dot3.classList.add("active");
+        
+        // Update Indicator
+        stepItem2.classList.remove("active");
+        stepItem2.classList.add("completed");
+        stepItem3.classList.add("active");
+        stepProgress.style.width = "100%";
       } else {
         showToast("Verification Failed", data.message || "Invalid OTP code.", "error");
         showInputError(otpCodeInput, data.message || "Invalid OTP code");

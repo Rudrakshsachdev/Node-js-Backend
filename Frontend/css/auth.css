@@ -159,6 +159,28 @@ body {
   letter-spacing: 0.05em;
 }
 
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forgot-link {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  text-transform: none; /* Keep normal casing */
+  letter-spacing: normal;
+  margin-bottom: 0.4rem;
+  transition: var(--transition);
+}
+
+.forgot-link:hover {
+  color: var(--border-focus);
+  text-decoration: underline;
+}
+
 .input-wrapper {
   position: relative;
   display: flex;

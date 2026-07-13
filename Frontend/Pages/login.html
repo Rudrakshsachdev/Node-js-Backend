@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +8,15 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <!-- Phosphor Icons -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="../css/auth.css">
 </head>
+
 <body>
   <div class="glass-bg-container">
     <main class="login-wrapper">
@@ -45,14 +49,15 @@
 
             <!-- Password Input -->
             <div class="input-group">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-                <label for="password" style="margin-bottom: 0;">Password</label>
-                <a href="forgot-password.html" style="font-size: 0.75rem; font-weight: 500; color: var(--accent); text-decoration: none;">Forgot?</a>
+              <div class="label-row">
+                <label for="password">Password</label>
+                <a href="forgot-password.html" class="forgot-link">Forgot Password?</a>
               </div>
               <div class="input-wrapper">
                 <i class="ph ph-lock field-icon"></i>
                 <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
-                <button type="button" id="togglePassword" class="toggle-password-btn" aria-label="Toggle Password Visibility">
+                <button type="button" id="togglePassword" class="toggle-password-btn"
+                  aria-label="Toggle Password Visibility">
                   <i class="ph ph-eye" id="eyeIcon"></i>
                 </button>
               </div>
@@ -80,4 +85,5 @@
   <!-- Script File -->
   <script src="../js/login.js"></script>
 </body>
+
 </html>
