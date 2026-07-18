@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Edit2, Trash2, ArrowUpRight, ArrowDownRight, Tag, CreditCard } from 'lucide-react';
+import TransactionDetailModal from './TransactionDetailModal';
 
 const CATEGORY_COLORS = {
   Food: 'bg-amber-50 text-amber-700 border-amber-100',
@@ -16,6 +17,7 @@ const CATEGORY_COLORS = {
 };
 
 export default function RecentTransactions({ expenses = [], onEdit, onDelete }) {
+  const [detailedExpense, setDetailedExpense] = useState(null);
   const latestExpenses = expenses.slice(0, 5); // display latest 5 transactions
 
   const formatDate = (dateString) => {
@@ -31,7 +33,7 @@ export default function RecentTransactions({ expenses = [], onEdit, onDelete }) 
       <div className="flex justify-between items-center mb-6">
         <div>
           <h3 className="text-lg font-bold text-slate-900">Recent Transactions</h3>
-          <p className="text-xs text-slate-500 mt-0.5">Your latest financial logs</p>
+          <p className="text-xs text-slate-500 mt-0.5">Your latest financial logs (click row to view details)</p>
         </div>
       </div>
 
@@ -58,9 +60,12 @@ export default function RecentTransactions({ expenses = [], onEdit, onDelete }) 
                 const isIncome = expense.type === 'income';
 
                 return (
-                  <tr key={expense._id} className="hover:bg-slate-50/50 group transition-colors duration-150">
-                    {/* Title */}
-                    <td className="py-4 pl-2">
+                  <tr 
+                    key={expense._id} 
+                    className="hover:bg-slate-50/50 group transition-colors duration-150 cursor-pointer"
+                  >
+                    {/* Metadata cells (opens detail modal on click) */}
+                    <td className="py-4 pl-2" onClick={() => setDetailedExpense(expense)}>
                       <div className="flex items-center gap-3">
                         <div className={`p-2 rounded-xl border ${
                           isIncome
@@ -82,47 +87,49 @@ export default function RecentTransactions({ expenses = [], onEdit, onDelete }) 
                       </div>
                     </td>
 
-                    {/* Category */}
-                    <td className="py-4">
+                    <td className="py-4" onClick={() => setDetailedExpense(expense)}>
                       <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border ${colorClass}`}>
                         <Tag className="w-3 h-3" />
                         {expense.category}
                       </span>
                     </td>
 
-                    {/* Payment Method */}
-                    <td className="py-4">
+                    <td className="py-4" onClick={() => setDetailedExpense(expense)}>
                       <span className="text-sm text-slate-600 flex items-center gap-1.5">
                         <CreditCard className="w-3.5 h-3.5 text-slate-400" />
                         {expense.paymentMethod}
                       </span>
                     </td>
 
-                    {/* Date */}
-                    <td className="py-4">
+                    <td className="py-4" onClick={() => setDetailedExpense(expense)}>
                       <span className="text-sm text-slate-600 font-medium">
                         {formatDate(expense.date)}
                       </span>
                     </td>
 
-                    {/* Amount */}
-                    <td className="py-4 text-right pr-2">
+                    <td className="py-4 text-right pr-2" onClick={() => setDetailedExpense(expense)}>
                       <span className={`font-bold text-sm ${isIncome ? 'text-emerald-600' : 'text-rose-600'}`}>
                         {isIncome ? '+' : '-'}₹{expense.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </td>
 
-                    {/* Actions */}
+                    {/* Action buttons (propagation is isolated from row click) */}
                     <td className="py-4 text-center">
                       <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                         <button
-                          onClick={() => onEdit(expense)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEdit(expense);
+                          }}
                           className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-all"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
-                          onClick={() => onDelete(expense._id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(expense._id);
+                          }}
                           className="p-1.5 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 transition-all"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -136,6 +143,13 @@ export default function RecentTransactions({ expenses = [], onEdit, onDelete }) 
           </table>
         </div>
       )}
+
+      {/* Detail Modal Component */}
+      <TransactionDetailModal
+        isOpen={!!detailedExpense}
+        onClose={() => setDetailedExpense(null)}
+        expense={detailedExpense}
+      />
     </div>
   );
 }

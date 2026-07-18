@@ -6,6 +6,7 @@ import ForgotPassword from './components/ForgotPassword/ForgotPassword';
 import VerifyOtp from './components/VerifyOtp/VerifyOtp';
 import ResetPassword from './components/ResetPassword/ResetPassword';
 import Dashboard from './components/Dashboard/Dashboard';
+import TransactionsList from './components/Dashboard/TransactionsList';
 
 function App() {
   return (
@@ -21,8 +22,9 @@ function App() {
         <Route path="/auth/verify-otp" element={<VerifyOtp />} />
         <Route path="/auth/reset-password" element={<ResetPassword />} />
         
-        {/* Protected Dashboard Route */}
+        {/* Protected Dashboard Routes */}
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/transactions" element={<TransactionsList />} />
         
         {/* Fallback navigation redirects to onboarding */}
         <Route path="*" element={<Navigate to="/auth/onboarding" replace />} />
