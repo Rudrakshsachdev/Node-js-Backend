@@ -21,21 +21,29 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, editingExp
     description: '',
   });
 
+  const [customCategory, setCustomCategory] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Determine if chosen category is custom
+  const isCustomCategorySelected = formData.category === 'Other';
 
   // Load existing expense for editing mode
   useEffect(() => {
     if (editingExpense) {
+      const isKnownCategory = CATEGORIES.slice(0, -1).includes(editingExpense.category);
+      
       setFormData({
         title: editingExpense.title,
         amount: editingExpense.amount,
         type: editingExpense.type,
-        category: editingExpense.category,
+        category: isKnownCategory ? editingExpense.category : 'Other',
         paymentMethod: editingExpense.paymentMethod,
         date: new Date(editingExpense.date).toISOString().split('T')[0],
         description: editingExpense.description || '',
       });
+      
+      setCustomCategory(isKnownCategory ? '' : editingExpense.category);
     } else {
       setFormData({
         title: '',
@@ -46,6 +54,7 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, editingExp
         date: new Date().toISOString().split('T')[0],
         description: '',
       });
+      setCustomCategory('');
     }
     setError('');
   }, [editingExpense, isOpen]);
@@ -70,11 +79,21 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, editingExp
       return;
     }
 
+    let finalCategory = formData.category;
+    if (isCustomCategorySelected) {
+      if (!customCategory.trim()) {
+        setError('Please specify a custom category');
+        return;
+      }
+      finalCategory = customCategory.trim();
+    }
+
     setIsLoading(true);
 
     try {
       await onSubmit({
         ...formData,
+        category: finalCategory,
         amount: Number(formData.amount),
       });
       onClose();
@@ -225,6 +244,24 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, editingExp
               </select>
             </div>
           </div>
+
+          {/* Custom Category Input Field (Shown only when 'Other' is selected) */}
+          {isCustomCategorySelected && (
+            <div className="animate-in slide-in-from-top-2 duration-150">
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                Specify Custom Category
+              </label>
+              <input
+                type="text"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                placeholder="e.g. Gift, Tax, Refund"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-1 focus:ring-violet-600 focus:bg-white transition-all duration-150"
+                disabled={isLoading}
+                required
+              />
+            </div>
+          )}
 
           {/* Description */}
           <div>

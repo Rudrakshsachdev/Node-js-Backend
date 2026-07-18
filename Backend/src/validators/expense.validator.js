@@ -22,21 +22,7 @@ const expenseValidator = [
   body("category")
     .trim()
     .notEmpty()
-    .withMessage("Category is required")
-    .isIn([
-      "Food",
-      "Transportation",
-      "Shopping",
-      "Bills",
-      "Healthcare",
-      "Entertainment",
-      "Education",
-      "Travel",
-      "Salary",
-      "Investment",
-      "Other"
-    ])
-    .withMessage("Invalid category type"),
+    .withMessage("Category is required"),
 
   body("paymentMethod")
     .trim()
