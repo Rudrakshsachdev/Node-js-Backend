@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import DashboardHeader from './DashboardHeader';
 import KpiCards from './KpiCards';
-import AllowanceCard from './AllowanceCard';
-import ForecastCard from './ForecastCard';
+import DailySpendingCard from './DailySpendingCard';
+import BudgetProgressCard from './BudgetProgressCard';
 import RecentTransactions from './RecentTransactions';
 import CategoryBreakdown from './CategoryBreakdown';
 import PaymentMethodsBreakdown from './PaymentMethodsBreakdown';
@@ -148,10 +148,10 @@ export default function Dashboard() {
             {/* KPI Cards Component */}
             <KpiCards expenses={expenses} />
 
-            {/* Sub-KPI insights (Allowance and Forecast side-by-side) */}
+            {/* Sub-KPI insights (Daily Spending & Budget Progress side-by-side) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <AllowanceCard />
-              <ForecastCard />
+              <DailySpendingCard expenses={expenses} />
+              <BudgetProgressCard expenses={expenses} />
             </div>
 
             {/* Content Details Grid */}
