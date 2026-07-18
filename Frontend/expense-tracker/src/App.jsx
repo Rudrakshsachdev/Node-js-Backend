@@ -7,6 +7,7 @@ import VerifyOtp from './components/VerifyOtp/VerifyOtp';
 import ResetPassword from './components/ResetPassword/ResetPassword';
 import Dashboard from './components/Dashboard/Dashboard';
 import TransactionsList from './components/Dashboard/TransactionsList';
+import AnalyticsPage from './components/Analytics/AnalyticsPage';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         {/* Protected Dashboard Routes */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/transactions" element={<TransactionsList />} />
+        <Route path="/dashboard/analytics" element={<AnalyticsPage />} />
         
         {/* Fallback navigation redirects to onboarding */}
         <Route path="*" element={<Navigate to="/auth/onboarding" replace />} />
