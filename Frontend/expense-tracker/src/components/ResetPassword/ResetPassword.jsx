@@ -1,49 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, CheckCircle2, AlertCircle, ShieldCheck, TrendingUp } from 'lucide-react';
+import { Lock, Eye, EyeOff, Loader2, ArrowRight, CheckCircle2, AlertCircle, ArrowLeft } from 'lucide-react';
 
-export default function Signup() {
+export default function ResetPassword() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
-
+  const [resetToken, setResetToken] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Password complexity checks
-  const isMinLength = formData.password.length >= 7;
-  const isMatch = formData.password && formData.password === formData.confirmPassword;
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setError('');
-  };
+  // Retrieve resetToken from sessionStorage
+  useEffect(() => {
+    const savedToken = sessionStorage.getItem('resetToken');
+    if (savedToken) {
+      setResetToken(savedToken);
+    } else {
+      setError('Session missing or expired. Please restart the password reset process.');
+    }
+  }, []);
 
   const validateForm = () => {
-    if (!formData.name.trim()) return "Full name is required";
-    if (!formData.email.trim()) return "Email address is required";
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) return "Please enter a valid email address";
-    
-    if (!isMinLength) {
-      return "Password must be at least 7 characters";
+    if (newPassword.length < 7) {
+      return "Password must be at least 7 characters long";
     }
-    
-    if (!isMatch) {
+    if (newPassword !== confirmPassword) {
       return "Passwords do not match";
     }
-    
     return null;
   };
 
@@ -51,6 +37,11 @@ export default function Signup() {
     e.preventDefault();
     setError('');
     setSuccess('');
+
+    if (!resetToken) {
+      setError('Session expired. Please request a new OTP.');
+      return;
+    }
 
     const validationError = validateForm();
     if (validationError) {
@@ -62,37 +53,35 @@ export default function Signup() {
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${apiUrl}/api/v1/auth/onboarding`, {
+      const response = await fetch(`${apiUrl}/api/v1/auth/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
+          resetToken,
+          newPassword,
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Registration failed');
+        throw new Error(data.message || 'Failed to reset password');
       }
 
-      setSuccess('Account created successfully! Preparing your dashboard...');
+      setSuccess('Your password has been successfully reset! Redirecting to login...');
       
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-      }
+      // Clean up session parameters
+      sessionStorage.removeItem('resetEmail');
+      sessionStorage.removeItem('resetToken');
 
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/auth/login');
       }, 1500);
 
     } catch (err) {
-      setError(err.message || 'Failed to connect to the server. Please ensure the backend is running.');
+      setError(err.message || 'Something went wrong. Please request a new OTP and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -107,28 +96,26 @@ export default function Signup() {
         <div className="absolute top-[-5%] right-[20%] w-[350px] h-[350px] rounded-full bg-emerald-200 blur-[80px]" />
       </div>
 
-      {/* Main Container */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4">
-        {/* Brand/Logo */}
+        {/* Brand Logo/Icon */}
         <div className="flex justify-center items-center gap-2.5 mb-6">
           <div className="p-2.5 bg-gradient-to-tr from-violet-600 to-indigo-600 rounded-xl shadow-md shadow-violet-500/10">
-            <TrendingUp className="w-5.5 h-5.5 text-white" strokeWidth={2.5} />
+            <Lock className="w-5.5 h-5.5 text-white" strokeWidth={2.5} />
           </div>
           <span className="text-xl font-bold text-slate-900 tracking-tight">ApexExpense</span>
         </div>
 
         <h2 className="text-center text-3xl font-extrabold tracking-tight text-slate-900">
-          Create your account
+          New Password
         </h2>
         <p className="mt-2 text-center text-sm text-slate-600">
-          Start tracking, optimizing, and growing your wealth
+          Please enter your secure new password below
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4">
         <div className="bg-white py-8 px-6 shadow-xl shadow-slate-100/60 rounded-3xl border border-slate-200/60 sm:px-10">
           
-          {/* Notification Alerts */}
           {error && (
             <div className="mb-6 flex items-start gap-3 bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl text-sm animate-in fade-in duration-200">
               <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
@@ -144,71 +131,24 @@ export default function Signup() {
           )}
 
           <form className="space-y-5" onSubmit={handleSubmit}>
-            {/* Full Name */}
+            {/* New Password */}
             <div>
-              <label htmlFor="name" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Full Name
-              </label>
-              <div className="mt-1.5 relative group">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-violet-600 transition-colors duration-150">
-                  <User className="w-4 h-4" />
-                </div>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="John Doe"
-                  disabled={isLoading}
-                  className="block w-full pl-11 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-1 focus:ring-violet-600 focus:bg-white transition-all duration-200"
-                />
-              </div>
-            </div>
-
-            {/* Email Address */}
-            <div>
-              <label htmlFor="email" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Email Address
-              </label>
-              <div className="mt-1.5 relative group">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-violet-600 transition-colors duration-150">
-                  <Mail className="w-4 h-4" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="you@example.com"
-                  disabled={isLoading}
-                  className="block w-full pl-11 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-1 focus:ring-violet-600 focus:bg-white transition-all duration-200"
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Password
+              <label htmlFor="newPassword" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                New Password
               </label>
               <div className="mt-1.5 relative group">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-violet-600 transition-colors duration-150">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
-                  id="password"
-                  name="password"
+                  id="newPassword"
+                  name="newPassword"
                   type={showPassword ? "text" : "password"}
                   required
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  disabled={isLoading}
+                  value={newPassword}
+                  onChange={(e) => { setNewPassword(e.target.value); setError(''); }}
+                  placeholder="Min. 7 characters"
+                  disabled={isLoading || !resetToken}
                   className="block w-full pl-11 pr-10 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-1 focus:ring-violet-600 focus:bg-white transition-all duration-200"
                 />
                 <button
@@ -235,10 +175,10 @@ export default function Signup() {
                   name="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   required
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
+                  value={confirmPassword}
+                  onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
                   placeholder="••••••••"
-                  disabled={isLoading}
+                  disabled={isLoading || !resetToken}
                   className="block w-full pl-11 pr-10 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-1 focus:ring-violet-600 focus:bg-white transition-all duration-200"
                 />
                 <button
@@ -251,39 +191,21 @@ export default function Signup() {
               </div>
             </div>
 
-            {/* Realtime Checklist */}
-            {formData.password && (
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs space-y-2 animate-in fade-in duration-200">
-                <div className="flex items-center gap-2">
-                  <div className={`w-1.5 h-1.5 rounded-full ${isMinLength ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-                  <span className={isMinLength ? 'text-emerald-700 font-medium' : 'text-slate-500'}>
-                    At least 7 characters
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className={`w-1.5 h-1.5 rounded-full ${isMatch ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-                  <span className={isMatch ? 'text-emerald-700 font-medium' : 'text-slate-500'}>
-                    Passwords match
-                  </span>
-                </div>
-              </div>
-            )}
-
             {/* Submit Button */}
             <div>
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || !resetToken}
                 className="w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-violet-500/10 text-sm font-semibold text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-all duration-150 disabled:opacity-75 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
               >
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Creating account...
+                    Resetting password...
                   </>
                 ) : (
                   <>
-                    Create Free Account
+                    Update Password
                     <ArrowRight className="w-4.5 h-4.5" />
                   </>
                 )}
@@ -291,20 +213,14 @@ export default function Signup() {
             </div>
           </form>
 
-          {/* Alternative Auth Option */}
+          {/* Navigation Links */}
           <div className="mt-6 text-center text-sm border-t border-slate-100 pt-6">
-            <span className="text-slate-500">Already have an account?</span>{' '}
-            <Link to="/auth/login" className="font-semibold text-violet-600 hover:text-violet-500 transition-colors">
-              Log in
+            <Link to="/auth/forgot-password" className="inline-flex items-center gap-2 font-semibold text-slate-600 hover:text-violet-600 transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+              Request new OTP
             </Link>
           </div>
 
-        </div>
-
-        {/* Form Trust footer */}
-        <div className="mt-6 flex justify-center items-center gap-2 text-xs text-slate-400">
-          <ShieldCheck className="w-4.5 h-4.5 text-slate-400" />
-          <span>SSL Secure & Encrypted Registration</span>
         </div>
       </div>
     </div>
