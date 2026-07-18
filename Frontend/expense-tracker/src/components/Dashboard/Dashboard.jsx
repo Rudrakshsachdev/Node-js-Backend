@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
+import DashboardHeader from './DashboardHeader';
 import KpiCards from './KpiCards';
+import AllowanceCard from './AllowanceCard';
+import ForecastCard from './ForecastCard';
 import RecentTransactions from './RecentTransactions';
+import CategoryBreakdown from './CategoryBreakdown';
+import PaymentMethodsBreakdown from './PaymentMethodsBreakdown';
 import TransactionModal from './TransactionModal';
-import { Plus, Tag, Loader2, RefreshCw } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 export default function Dashboard() {
   const [expenses, setExpenses] = useState([]);
@@ -114,16 +119,6 @@ export default function Dashboard() {
     setIsModalOpen(true);
   };
 
-  // Calculate Category breakdown for visual indicator list
-  const categorySummary = {};
-  expenses
-    .filter(e => e.type === 'expense')
-    .forEach(e => {
-      categorySummary[e.category] = (categorySummary[e.category] || 0) + e.amount;
-    });
-
-  const totalExpenseSum = Object.values(categorySummary).reduce((a, b) => a + b, 0);
-
   return (
     <div className="min-h-screen bg-slate-50 flex">
       {/* Sidebar */}
@@ -132,29 +127,11 @@ export default function Dashboard() {
       {/* Main Content Area */}
       <main className="flex-1 p-8 overflow-y-auto space-y-8">
         
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Overview</h1>
-            <p className="text-sm text-slate-500 mt-1">Real-time status of your capital distribution</p>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <button
-              onClick={fetchExpenses}
-              className="p-2.5 rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-all active:scale-95"
-            >
-              <RefreshCw className="w-5 h-5" />
-            </button>
-            <button
-              onClick={openAddModal}
-              className="bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl py-3 px-5 shadow-lg shadow-violet-500/10 flex items-center gap-2 hover:-translate-y-0.5 active:translate-y-0 transition-all"
-            >
-              <Plus className="w-5 h-5" />
-              Add Transaction
-            </button>
-          </div>
-        </div>
+        {/* Header Component */}
+        <DashboardHeader
+          onRefresh={fetchExpenses}
+          onAddTransaction={openAddModal}
+        />
 
         {/* Loading / Error States */}
         {isLoading && expenses.length === 0 ? (
@@ -168,8 +145,14 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
-            {/* KPI Cards */}
+            {/* KPI Cards Component */}
             <KpiCards expenses={expenses} />
+
+            {/* Sub-KPI insights (Allowance and Forecast side-by-side) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <AllowanceCard />
+              <ForecastCard />
+            </div>
 
             {/* Content Details Grid */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
@@ -183,44 +166,10 @@ export default function Dashboard() {
                 />
               </div>
 
-              {/* Category Breakdown (Right Col) */}
-              <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-5">
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900">Spending Category</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">Top expense channels</p>
-                </div>
-                
-                {Object.keys(categorySummary).length === 0 ? (
-                  <div className="py-10 text-center text-slate-400 text-sm">
-                    No expense logs to analyze
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {Object.entries(categorySummary)
-                      .sort((a, b) => b[1] - a[1])
-                      .slice(0, 5)
-                      .map(([category, amount]) => {
-                        const percentage = totalExpenseSum > 0 ? (amount / totalExpenseSum) * 100 : 0;
-                        return (
-                          <div key={category} className="space-y-1.5">
-                            <div className="flex justify-between text-sm font-semibold">
-                              <span className="text-slate-700 flex items-center gap-1.5">
-                                <Tag className="w-3.5 h-3.5 text-slate-400" />
-                                {category}
-                              </span>
-                              <span className="text-slate-900">₹{amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
-                            </div>
-                            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                              <div
-                                className="bg-gradient-to-r from-violet-600 to-indigo-500 h-full rounded-full transition-all duration-500"
-                                style={{ width: `${percentage}%` }}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-                )}
+              {/* breakdowns (Right Col) */}
+              <div className="space-y-6">
+                <CategoryBreakdown expenses={expenses} />
+                <PaymentMethodsBreakdown expenses={expenses} />
               </div>
 
             </div>
