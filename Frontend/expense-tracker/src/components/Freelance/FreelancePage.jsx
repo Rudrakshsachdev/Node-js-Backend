@@ -56,13 +56,12 @@ export default function FreelancePage() {
     loadProjects();
   }, []);
 
-  const loadProjects = () => {
-    const data = getFreelanceProjects();
+  const loadProjects = async () => {
+    const data = await getFreelanceProjects();
     setProjects(data);
 
-    // Refresh active drawer project if open
     if (drawerProject) {
-      const refreshed = data.find((p) => p.id === drawerProject.id);
+      const refreshed = data.find((p) => (p.id || p._id) === (drawerProject.id || drawerProject._id));
       setDrawerProject(refreshed || null);
     }
   };
@@ -99,25 +98,25 @@ export default function FreelancePage() {
     setIsProjectModalOpen(true);
   };
 
-  const handleSaveProject = (projectData) => {
+  const handleSaveProject = async (projectData) => {
     let updated;
     if (editingProject) {
-      updated = updateFreelanceProject(editingProject.id, projectData);
+      updated = await updateFreelanceProject(editingProject.id || editingProject._id, projectData);
     } else {
-      updated = addFreelanceProject(projectData);
+      updated = await addFreelanceProject(projectData);
     }
     setProjects(updated);
-    if (drawerProject && editingProject && drawerProject.id === editingProject.id) {
-      const refreshed = updated.find((p) => p.id === editingProject.id);
+    if (drawerProject && editingProject && (drawerProject.id || drawerProject._id) === (editingProject.id || editingProject._id)) {
+      const refreshed = updated.find((p) => (p.id || p._id) === (editingProject.id || editingProject._id));
       setDrawerProject(refreshed || null);
     }
   };
 
-  const handleDeleteProject = (projectId) => {
+  const handleDeleteProject = async (projectId) => {
     if (!window.confirm('Are you sure you want to delete this freelance project?')) return;
-    const updated = deleteFreelanceProject(projectId);
+    const updated = await deleteFreelanceProject(projectId);
     setProjects(updated);
-    if (drawerProject && drawerProject.id === projectId) {
+    if (drawerProject && (drawerProject.id || drawerProject._id) === projectId) {
       setIsDrawerOpen(false);
       setDrawerProject(null);
     }
@@ -136,27 +135,27 @@ export default function FreelancePage() {
     setIsPaymentModalOpen(true);
   };
 
-  const handleSavePayment = (paymentData) => {
+  const handleSavePayment = async (paymentData) => {
     if (!targetProjectIdForPayment) return;
     let updated;
     if (editingPayment) {
-      updated = updatePaymentInProject(targetProjectIdForPayment, editingPayment.id, paymentData);
+      updated = await updatePaymentInProject(targetProjectIdForPayment, editingPayment.id || editingPayment._id, paymentData);
     } else {
-      updated = addPaymentToProject(targetProjectIdForPayment, paymentData);
+      updated = await addPaymentToProject(targetProjectIdForPayment, paymentData);
     }
     setProjects(updated);
-    if (drawerProject && drawerProject.id === targetProjectIdForPayment) {
-      const refreshed = updated.find((p) => p.id === targetProjectIdForPayment);
+    if (drawerProject && (drawerProject.id || drawerProject._id) === targetProjectIdForPayment) {
+      const refreshed = updated.find((p) => (p.id || p._id) === targetProjectIdForPayment);
       setDrawerProject(refreshed || null);
     }
   };
 
-  const handleDeletePayment = (projectId, paymentId) => {
+  const handleDeletePayment = async (projectId, paymentId) => {
     if (!window.confirm('Are you sure you want to delete this payment entry?')) return;
-    const updated = deletePaymentFromProject(projectId, paymentId);
+    const updated = await deletePaymentFromProject(projectId, paymentId);
     setProjects(updated);
-    if (drawerProject && drawerProject.id === projectId) {
-      const refreshed = updated.find((p) => p.id === projectId);
+    if (drawerProject && (drawerProject.id || drawerProject._id) === projectId) {
+      const refreshed = updated.find((p) => (p.id || p._id) === projectId);
       setDrawerProject(refreshed || null);
     }
   };

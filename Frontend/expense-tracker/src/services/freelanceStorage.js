@@ -1,9 +1,11 @@
-// Standalone local storage service for Freelance Projects and Payments
+// Service layer for Freelance Projects and Payments with Backend API Integration and LocalStorage Fallback
 
+const getApiUrl = () => import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const STORAGE_KEY = 'apex_freelance_projects';
 
 const DEFAULT_PROJECTS = [
   {
+    _id: 'proj-1',
     id: 'proj-1',
     title: 'E-Commerce Mobile App Redesign',
     receivedDate: '2026-06-01',
@@ -14,6 +16,7 @@ const DEFAULT_PROJECTS = [
     completionDate: '',
     payments: [
       {
+        _id: 'pay-101',
         id: 'pay-101',
         title: 'Initial Deposit (30%)',
         amount: 45000,
@@ -24,6 +27,7 @@ const DEFAULT_PROJECTS = [
         notes: 'Advance received upon signing contract.'
       },
       {
+        _id: 'pay-102',
         id: 'pay-102',
         title: 'Milestone 1 - Figma & UI Handover',
         amount: 35000,
@@ -34,6 +38,7 @@ const DEFAULT_PROJECTS = [
         notes: 'Wire transfer confirmed.'
       },
       {
+        _id: 'pay-103',
         id: 'pay-103',
         title: 'Milestone 2 - App Beta Release',
         amount: 40000,
@@ -47,6 +52,7 @@ const DEFAULT_PROJECTS = [
     createdAt: '2026-06-01T10:00:00.000Z'
   },
   {
+    _id: 'proj-2',
     id: 'proj-2',
     title: 'AI Customer Service Bot Dashboard',
     receivedDate: '2026-05-10',
@@ -57,6 +63,7 @@ const DEFAULT_PROJECTS = [
     completionDate: '2026-07-15',
     payments: [
       {
+        _id: 'pay-201',
         id: 'pay-201',
         title: 'Full Payment',
         amount: 85000,
@@ -71,7 +78,17 @@ const DEFAULT_PROJECTS = [
   }
 ];
 
-export const getFreelanceProjects = () => {
+const formatProjectData = (p) => ({
+  ...p,
+  id: p._id || p.id,
+  payments: (p.payments || []).map((pay) => ({
+    ...pay,
+    id: pay._id || pay.id
+  }))
+});
+
+// Helper for local storage backup
+const getLocalProjects = () => {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
     if (!data) {
@@ -80,22 +97,63 @@ export const getFreelanceProjects = () => {
     }
     return JSON.parse(data);
   } catch (e) {
-    console.error('Failed to read freelance projects from storage', e);
     return DEFAULT_PROJECTS;
   }
 };
 
-export const saveFreelanceProjects = (projects) => {
+const saveLocalProjects = (projects) => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-  } catch (e) {
-    console.error('Failed to save freelance projects to storage', e);
-  }
+  } catch (e) {}
 };
 
-export const addFreelanceProject = (projectData) => {
-  const projects = getFreelanceProjects();
+// GET /api/v1/freelance
+export const getFreelanceProjects = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) return getLocalProjects();
+
+  try {
+    const response = await fetch(`${getApiUrl()}/api/v1/freelance`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await response.json();
+    if (response.ok && data.projects) {
+      const formatted = data.projects.map(formatProjectData);
+      saveLocalProjects(formatted);
+      return formatted;
+    }
+  } catch (err) {
+    console.warn('API unavailable, loading local freelance storage:', err.message);
+  }
+  return getLocalProjects();
+};
+
+// POST /api/v1/freelance
+export const addFreelanceProject = async (projectData) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const response = await fetch(`${getApiUrl()}/api/v1/freelance`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(projectData)
+      });
+      const data = await response.json();
+      if (response.ok && data.project) {
+        return getFreelanceProjects();
+      }
+    } catch (err) {
+      console.warn('API error during addProject:', err.message);
+    }
+  }
+
+  // Fallback to localStorage
+  const local = getLocalProjects();
   const newProject = {
+    _id: 'proj-' + Date.now(),
     id: 'proj-' + Date.now(),
     title: projectData.title || '',
     receivedDate: projectData.receivedDate || new Date().toISOString().split('T')[0],
@@ -104,19 +162,39 @@ export const addFreelanceProject = (projectData) => {
     status: projectData.isCompleted ? 'Completed' : (projectData.status || 'Active'),
     isCompleted: !!projectData.isCompleted,
     completionDate: projectData.isCompleted ? (projectData.completionDate || new Date().toISOString().split('T')[0]) : '',
-    payments: projectData.payments || [],
+    payments: [],
     createdAt: new Date().toISOString()
   };
-
-  const updated = [newProject, ...projects];
-  saveFreelanceProjects(updated);
+  const updated = [newProject, ...local];
+  saveLocalProjects(updated);
   return updated;
 };
 
-export const updateFreelanceProject = (id, projectData) => {
-  const projects = getFreelanceProjects();
-  const updated = projects.map((p) => {
-    if (p.id === id) {
+// PUT /api/v1/freelance/:id
+export const updateFreelanceProject = async (id, projectData) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const response = await fetch(`${getApiUrl()}/api/v1/freelance/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(projectData)
+      });
+      if (response.ok) {
+        return getFreelanceProjects();
+      }
+    } catch (err) {
+      console.warn('API error during updateProject:', err.message);
+    }
+  }
+
+  // Fallback to localStorage
+  const local = getLocalProjects();
+  const updated = local.map((p) => {
+    if (p.id === id || p._id === id) {
       const isCompleted = !!projectData.isCompleted;
       return {
         ...p,
@@ -126,27 +204,66 @@ export const updateFreelanceProject = (id, projectData) => {
         technologies: projectData.technologies,
         status: isCompleted ? 'Completed' : projectData.status,
         isCompleted,
-        completionDate: isCompleted ? projectData.completionDate : '',
+        completionDate: isCompleted ? projectData.completionDate : ''
       };
     }
     return p;
   });
-  saveFreelanceProjects(updated);
+  saveLocalProjects(updated);
   return updated;
 };
 
-export const deleteFreelanceProject = (id) => {
-  const projects = getFreelanceProjects();
-  const updated = projects.filter((p) => p.id !== id);
-  saveFreelanceProjects(updated);
+// DELETE /api/v1/freelance/:id
+export const deleteFreelanceProject = async (id) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const response = await fetch(`${getApiUrl()}/api/v1/freelance/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        return getFreelanceProjects();
+      }
+    } catch (err) {
+      console.warn('API error during deleteProject:', err.message);
+    }
+  }
+
+  // Fallback to localStorage
+  const local = getLocalProjects();
+  const updated = local.filter((p) => p.id !== id && p._id !== id);
+  saveLocalProjects(updated);
   return updated;
 };
 
-export const addPaymentToProject = (projectId, paymentData) => {
-  const projects = getFreelanceProjects();
-  const updated = projects.map((p) => {
-    if (p.id === projectId) {
+// POST /api/v1/freelance/:id/payments
+export const addPaymentToProject = async (projectId, paymentData) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const response = await fetch(`${getApiUrl()}/api/v1/freelance/${projectId}/payments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(paymentData)
+      });
+      if (response.ok) {
+        return getFreelanceProjects();
+      }
+    } catch (err) {
+      console.warn('API error during addPayment:', err.message);
+    }
+  }
+
+  // Fallback to localStorage
+  const local = getLocalProjects();
+  const updated = local.map((p) => {
+    if (p.id === projectId || p._id === projectId) {
       const newPayment = {
+        _id: 'pay-' + Date.now(),
         id: 'pay-' + Date.now(),
         title: paymentData.title || 'Payment',
         amount: parseFloat(paymentData.amount) || 0,
@@ -156,23 +273,41 @@ export const addPaymentToProject = (projectId, paymentData) => {
         transactionId: paymentData.transactionId || '',
         notes: paymentData.notes || ''
       };
-      return {
-        ...p,
-        payments: [...(p.payments || []), newPayment]
-      };
+      return { ...p, payments: [...(p.payments || []), newPayment] };
     }
     return p;
   });
-  saveFreelanceProjects(updated);
+  saveLocalProjects(updated);
   return updated;
 };
 
-export const updatePaymentInProject = (projectId, paymentId, paymentData) => {
-  const projects = getFreelanceProjects();
-  const updated = projects.map((p) => {
-    if (p.id === projectId) {
+// PUT /api/v1/freelance/:id/payments/:paymentId
+export const updatePaymentInProject = async (projectId, paymentId, paymentData) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const response = await fetch(`${getApiUrl()}/api/v1/freelance/${projectId}/payments/${paymentId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(paymentData)
+      });
+      if (response.ok) {
+        return getFreelanceProjects();
+      }
+    } catch (err) {
+      console.warn('API error during updatePayment:', err.message);
+    }
+  }
+
+  // Fallback to localStorage
+  const local = getLocalProjects();
+  const updated = local.map((p) => {
+    if (p.id === projectId || p._id === projectId) {
       const updatedPayments = (p.payments || []).map((pay) => {
-        if (pay.id === paymentId) {
+        if (pay.id === paymentId || pay._id === paymentId) {
           return {
             ...pay,
             title: paymentData.title,
@@ -190,22 +325,39 @@ export const updatePaymentInProject = (projectId, paymentId, paymentData) => {
     }
     return p;
   });
-  saveFreelanceProjects(updated);
+  saveLocalProjects(updated);
   return updated;
 };
 
-export const deletePaymentFromProject = (projectId, paymentId) => {
-  const projects = getFreelanceProjects();
-  const updated = projects.map((p) => {
-    if (p.id === projectId) {
+// DELETE /api/v1/freelance/:id/payments/:paymentId
+export const deletePaymentFromProject = async (projectId, paymentId) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const response = await fetch(`${getApiUrl()}/api/v1/freelance/${projectId}/payments/${paymentId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        return getFreelanceProjects();
+      }
+    } catch (err) {
+      console.warn('API error during deletePayment:', err.message);
+    }
+  }
+
+  // Fallback to localStorage
+  const local = getLocalProjects();
+  const updated = local.map((p) => {
+    if (p.id === projectId || p._id === projectId) {
       return {
         ...p,
-        payments: (p.payments || []).filter((pay) => pay.id !== paymentId)
+        payments: (p.payments || []).filter((pay) => pay.id !== paymentId && pay._id !== paymentId)
       };
     }
     return p;
   });
-  saveFreelanceProjects(updated);
+  saveLocalProjects(updated);
   return updated;
 };
 

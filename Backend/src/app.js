@@ -144,7 +144,9 @@ app.get("/Frontend/Pages/allowance.html", (req, res) => {
 
 // API routes
 const expenseRoutes = require("./routes/expense.routes");
+const freelanceRoutes = require("./routes/freelance.routes");
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/expenses", expenseRoutes);
+app.use("/api/v1/freelance", freelanceRoutes);
 
 module.exports = app;
