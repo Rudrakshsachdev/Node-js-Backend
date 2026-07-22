@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutGrid, ArrowLeftRight, PieChart, LineChart, PiggyBank, LogOut, IndianRupee, User, Menu, X } from 'lucide-react';
+import { LayoutGrid, ArrowLeftRight, PieChart, LineChart, PiggyBank, LogOut, IndianRupee, User, Menu, X, Briefcase } from 'lucide-react';
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +13,7 @@ export default function Sidebar() {
     { name: 'Analytics', path: '/dashboard/analytics', icon: PieChart },
     { name: 'Forecast', path: '/dashboard/forecast', icon: LineChart },
     { name: 'Allowance', path: '/dashboard/allowance', icon: PiggyBank },
+    { name: 'Freelance Projects', path: '/dashboard/freelance', icon: Briefcase },
   ];
 
   const handleLogout = () => {
