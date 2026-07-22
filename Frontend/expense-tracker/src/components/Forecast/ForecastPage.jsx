@@ -80,7 +80,7 @@ export default function ForecastPage() {
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-1 p-8 overflow-y-auto space-y-8">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 overflow-y-auto space-y-6 sm:space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>

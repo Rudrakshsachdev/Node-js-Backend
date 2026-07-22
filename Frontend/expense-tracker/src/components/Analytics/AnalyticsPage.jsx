@@ -55,7 +55,7 @@ export default function AnalyticsPage() {
       <Sidebar />
 
       {/* Main Content Area */}
-      <main className="flex-1 p-8 overflow-y-auto space-y-8">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 overflow-y-auto space-y-6 sm:space-y-8">
         
         {/* Header */}
         <div className="flex justify-between items-center">
