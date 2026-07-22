@@ -8,6 +8,7 @@ import RecentTransactions from './RecentTransactions';
 import CategoryBreakdown from './CategoryBreakdown';
 import PaymentMethodsBreakdown from './PaymentMethodsBreakdown';
 import TransactionModal from './TransactionModal';
+import Footer from './Footer';
 import { Loader2 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -183,6 +184,9 @@ export default function Dashboard() {
           onSubmit={handleAddOrEdit}
           editingExpense={editingExpense}
         />
+
+        {/* Footer */}
+        <Footer />
 
       </main>
     </div>

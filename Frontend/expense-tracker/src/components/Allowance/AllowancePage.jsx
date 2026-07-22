@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../Dashboard/Sidebar';
+import Footer from '../Dashboard/Footer';
 import {
   PiggyBank,
   CalendarRange,

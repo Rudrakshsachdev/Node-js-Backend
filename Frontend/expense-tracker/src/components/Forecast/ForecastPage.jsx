@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../Dashboard/Sidebar';
+import Footer from '../Dashboard/Footer';
 import {
   LineChart,
   TrendingUp,
@@ -275,6 +276,9 @@ export default function ForecastPage() {
                 </div>
               </div>
             </div>
+
+            {/* Footer */}
+            <Footer />
           </>
         )}
       </main>
