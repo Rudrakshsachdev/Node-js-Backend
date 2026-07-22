@@ -10,6 +10,7 @@ import TransactionsList from './components/Dashboard/TransactionsList';
 import AnalyticsPage from './components/Analytics/AnalyticsPage';
 
 import ForecastPage from './components/Forecast/ForecastPage';
+import AllowancePage from './components/Allowance/AllowancePage';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/dashboard/transactions" element={<TransactionsList />} />
         <Route path="/dashboard/analytics" element={<AnalyticsPage />} />
         <Route path="/dashboard/forecast" element={<ForecastPage />} />
+        <Route path="/dashboard/allowance" element={<AllowancePage />} />
         
         {/* Fallback navigation redirects to onboarding */}
         <Route path="*" element={<Navigate to="/auth/onboarding" replace />} />
