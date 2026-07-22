@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import DashboardHeader from './DashboardHeader';
 import KpiCards from './KpiCards';
-import AllowanceCard from './AllowanceCard';
-import ForecastCard from './ForecastCard';
+import DailySpendingCard from './DailySpendingCard';
+import BudgetProgressCard from './BudgetProgressCard';
 import RecentTransactions from './RecentTransactions';
 import CategoryBreakdown from './CategoryBreakdown';
 import PaymentMethodsBreakdown from './PaymentMethodsBreakdown';
 import TransactionModal from './TransactionModal';
+import Footer from './Footer';
 import { Loader2 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -125,7 +126,7 @@ export default function Dashboard() {
       <Sidebar />
 
       {/* Main Content Area */}
-      <main className="flex-1 p-8 overflow-y-auto space-y-8">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 overflow-y-auto space-y-6 sm:space-y-8">
         
         {/* Header Component */}
         <DashboardHeader
@@ -148,10 +149,10 @@ export default function Dashboard() {
             {/* KPI Cards Component */}
             <KpiCards expenses={expenses} />
 
-            {/* Sub-KPI insights (Allowance and Forecast side-by-side) */}
+            {/* Sub-KPI insights (Daily Spending & Budget Progress side-by-side) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <AllowanceCard />
-              <ForecastCard />
+              <DailySpendingCard expenses={expenses} />
+              <BudgetProgressCard expenses={expenses} />
             </div>
 
             {/* Content Details Grid */}
@@ -183,6 +184,9 @@ export default function Dashboard() {
           onSubmit={handleAddOrEdit}
           editingExpense={editingExpense}
         />
+
+        {/* Footer */}
+        <Footer />
 
       </main>
     </div>

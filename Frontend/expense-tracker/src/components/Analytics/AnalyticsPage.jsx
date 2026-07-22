@@ -5,6 +5,8 @@ import CategoryDistribution from './CategoryDistribution';
 import SavingsTrend from './SavingsTrend';
 import PaymentMethodUsage from './PaymentMethodUsage';
 import CumulativeSpending from './CumulativeSpending';
+import DailyLimitTracker from './DailyLimitTracker';
+import ExpenseVsBudget from './ExpenseVsBudget';
 import { Loader2, RefreshCw, BarChart3 } from 'lucide-react';
 
 export default function AnalyticsPage() {
@@ -53,7 +55,7 @@ export default function AnalyticsPage() {
       <Sidebar />
 
       {/* Main Content Area */}
-      <main className="flex-1 p-8 overflow-y-auto space-y-8">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 overflow-y-auto space-y-6 sm:space-y-8">
         
         {/* Header */}
         <div className="flex justify-between items-center">
@@ -96,13 +98,19 @@ export default function AnalyticsPage() {
               </div>
             </div>
 
-            {/* Row 2: Savings & Payment share */}
+            {/* Row 2: Daily Limit Tracker & Expenses vs Budget */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <DailyLimitTracker expenses={expenses} />
+              <ExpenseVsBudget expenses={expenses} />
+            </div>
+
+            {/* Row 3: Savings & Payment share */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               <SavingsTrend expenses={expenses} />
               <PaymentMethodUsage expenses={expenses} />
             </div>
 
-            {/* Row 3: Cumulative Spend (Full width) */}
+            {/* Row 4: Cumulative Spend (Full width) */}
             <CumulativeSpending expenses={expenses} />
 
           </div>

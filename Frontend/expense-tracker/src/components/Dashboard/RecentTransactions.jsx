@@ -29,11 +29,11 @@ export default function RecentTransactions({ expenses = [], onEdit, onDelete }) 
   };
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm">
-      <div className="flex justify-between items-center mb-6">
+    <div className="bg-white border border-slate-200/80 rounded-3xl p-4 sm:p-6 shadow-sm overflow-hidden">
+      <div className="flex justify-between items-center mb-4 sm:mb-6">
         <div>
-          <h3 className="text-lg font-bold text-slate-900">Recent Transactions</h3>
-          <p className="text-xs text-slate-500 mt-0.5">Your latest financial logs (click row to view details)</p>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900">Recent Transactions</h3>
+          <p className="text-xs text-slate-500 mt-0.5">Your latest financial logs (tap row to view details)</p>
         </div>
       </div>
 
@@ -42,106 +42,172 @@ export default function RecentTransactions({ expenses = [], onEdit, onDelete }) 
           No transactions logged yet. Add your first transaction above!
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-100 text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                <th className="pb-3 pl-2">Details</th>
-                <th className="pb-3">Category</th>
-                <th className="pb-3">Payment</th>
-                <th className="pb-3">Date</th>
-                <th className="pb-3 text-right pr-2">Amount</th>
-                <th className="pb-3 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {latestExpenses.map((expense) => {
-                const colorClass = CATEGORY_COLORS[expense.category] || 'bg-slate-50 text-slate-700 border-slate-100';
-                const isIncome = expense.type === 'income';
+        <>
+          {/* Desktop / Tablet View (Table) */}
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-100 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                  <th className="pb-3 pl-2">Details</th>
+                  <th className="pb-3">Category</th>
+                  <th className="pb-3">Payment</th>
+                  <th className="pb-3">Date</th>
+                  <th className="pb-3 text-right pr-2">Amount</th>
+                  <th className="pb-3 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {latestExpenses.map((expense) => {
+                  const colorClass = CATEGORY_COLORS[expense.category] || 'bg-slate-50 text-slate-700 border-slate-100';
+                  const isIncome = expense.type === 'income';
 
-                return (
-                  <tr 
-                    key={expense._id} 
-                    className="hover:bg-slate-50/50 group transition-colors duration-150 cursor-pointer"
-                  >
-                    {/* Metadata cells (opens detail modal on click) */}
-                    <td className="py-4 pl-2" onClick={() => setDetailedExpense(expense)}>
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-xl border ${
-                          isIncome
-                            ? 'bg-emerald-50 border-emerald-100 text-emerald-600'
-                            : 'bg-rose-50 border-rose-100 text-rose-600'
-                        }`}>
-                          {isIncome ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-                        </div>
-                        <div>
-                          <span className="font-semibold text-slate-900 text-sm block">
-                            {expense.title}
-                          </span>
-                          {expense.description && (
-                            <span className="text-xs text-slate-500 truncate max-w-xs block">
-                              {expense.description}
+                  return (
+                    <tr 
+                      key={expense._id} 
+                      className="hover:bg-slate-50/50 group transition-colors duration-150 cursor-pointer"
+                    >
+                      <td className="py-4 pl-2" onClick={() => setDetailedExpense(expense)}>
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-xl border ${
+                            isIncome
+                              ? 'bg-emerald-50 border-emerald-100 text-emerald-600'
+                              : 'bg-rose-50 border-rose-100 text-rose-600'
+                          }`}>
+                            {isIncome ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+                          </div>
+                          <div>
+                            <span className="font-semibold text-slate-900 text-sm block">
+                              {expense.title}
                             </span>
-                          )}
+                            {expense.description && (
+                              <span className="text-xs text-slate-500 truncate max-w-xs block">
+                                {expense.description}
+                              </span>
+                            )}
+                          </div>
                         </div>
+                      </td>
+
+                      <td className="py-4" onClick={() => setDetailedExpense(expense)}>
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border ${colorClass}`}>
+                          <Tag className="w-3 h-3" />
+                          {expense.category}
+                        </span>
+                      </td>
+
+                      <td className="py-4" onClick={() => setDetailedExpense(expense)}>
+                        <span className="text-sm text-slate-600 flex items-center gap-1.5">
+                          <CreditCard className="w-3.5 h-3.5 text-slate-400" />
+                          {expense.paymentMethod}
+                        </span>
+                      </td>
+
+                      <td className="py-4" onClick={() => setDetailedExpense(expense)}>
+                        <span className="text-sm text-slate-600 font-medium">
+                          {formatDate(expense.date)}
+                        </span>
+                      </td>
+
+                      <td className="py-4 text-right pr-2" onClick={() => setDetailedExpense(expense)}>
+                        <span className={`font-bold text-sm ${isIncome ? 'text-emerald-600' : 'text-rose-600'}`}>
+                          {isIncome ? '+' : '-'}₹{expense.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                      </td>
+
+                      <td className="py-4 text-center">
+                        <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onEdit(expense);
+                            }}
+                            className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-all"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDelete(expense._id);
+                            }}
+                            className="p-1.5 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 transition-all"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card List View */}
+          <div className="sm:hidden space-y-3">
+            {latestExpenses.map((expense) => {
+              const colorClass = CATEGORY_COLORS[expense.category] || 'bg-slate-50 text-slate-700 border-slate-100';
+              const isIncome = expense.type === 'income';
+
+              return (
+                <div
+                  key={expense._id}
+                  onClick={() => setDetailedExpense(expense)}
+                  className="p-3.5 bg-slate-50/70 hover:bg-slate-100/70 rounded-2xl border border-slate-100 flex items-center justify-between transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-3 min-w-0 pr-2">
+                    <div className={`p-2.5 rounded-xl border shrink-0 ${
+                      isIncome
+                        ? 'bg-emerald-50 border-emerald-100 text-emerald-600'
+                        : 'bg-rose-50 border-rose-100 text-rose-600'
+                    }`}>
+                      {isIncome ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+                    </div>
+
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-slate-900 text-sm truncate">{expense.title}</h4>
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${colorClass}`}>
+                          {expense.category}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-medium">
+                          {formatDate(expense.date)}
+                        </span>
                       </div>
-                    </td>
+                    </div>
+                  </div>
 
-                    <td className="py-4" onClick={() => setDetailedExpense(expense)}>
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border ${colorClass}`}>
-                        <Tag className="w-3 h-3" />
-                        {expense.category}
-                      </span>
-                    </td>
-
-                    <td className="py-4" onClick={() => setDetailedExpense(expense)}>
-                      <span className="text-sm text-slate-600 flex items-center gap-1.5">
-                        <CreditCard className="w-3.5 h-3.5 text-slate-400" />
-                        {expense.paymentMethod}
-                      </span>
-                    </td>
-
-                    <td className="py-4" onClick={() => setDetailedExpense(expense)}>
-                      <span className="text-sm text-slate-600 font-medium">
-                        {formatDate(expense.date)}
-                      </span>
-                    </td>
-
-                    <td className="py-4 text-right pr-2" onClick={() => setDetailedExpense(expense)}>
-                      <span className={`font-bold text-sm ${isIncome ? 'text-emerald-600' : 'text-rose-600'}`}>
-                        {isIncome ? '+' : '-'}₹{expense.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </span>
-                    </td>
-
-                    {/* Action buttons (propagation is isolated from row click) */}
-                    <td className="py-4 text-center">
-                      <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onEdit(expense);
-                          }}
-                          className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-all"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDelete(expense._id);
-                          }}
-                          className="p-1.5 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 transition-all"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                  <div className="text-right shrink-0 flex flex-col items-end gap-1">
+                    <span className={`font-bold text-sm ${isIncome ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      {isIncome ? '+' : '-'}₹{expense.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                    
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit(expense);
+                        }}
+                        className="p-1 rounded text-slate-400 hover:text-slate-700"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(expense._id);
+                        }}
+                        className="p-1 rounded text-slate-400 hover:text-red-600"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
 
       {/* Detail Modal Component */}
