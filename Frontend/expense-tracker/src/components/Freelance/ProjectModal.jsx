@@ -79,12 +79,12 @@ export default function ProjectModal({ isOpen, onClose, onSave, project = null }
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl border border-slate-100 w-full max-w-xl overflow-hidden animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+      <div className="bg-white rounded-2xl shadow-xl border border-slate-100 w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
           <div>
-            <h3 className="text-lg font-bold text-slate-800">
+            <h3 className="text-base sm:text-lg font-bold text-slate-800">
               {project ? 'Edit Freelance Project' : 'Add New Freelance Project'}
             </h3>
             <p className="text-xs text-slate-500">Capture core project information and technical scope.</p>
@@ -98,7 +98,7 @@ export default function ProjectModal({ isOpen, onClose, onSave, project = null }
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-5 overflow-y-auto space-y-4 flex-1">
           <div>
             <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
               Project Title *
