@@ -9,6 +9,8 @@ import Dashboard from './components/Dashboard/Dashboard';
 import TransactionsList from './components/Dashboard/TransactionsList';
 import AnalyticsPage from './components/Analytics/AnalyticsPage';
 
+import ForecastPage from './components/Forecast/ForecastPage';
+
 function App() {
   return (
     <BrowserRouter>
@@ -27,6 +29,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/transactions" element={<TransactionsList />} />
         <Route path="/dashboard/analytics" element={<AnalyticsPage />} />
+        <Route path="/dashboard/forecast" element={<ForecastPage />} />
         
         {/* Fallback navigation redirects to onboarding */}
         <Route path="*" element={<Navigate to="/auth/onboarding" replace />} />
