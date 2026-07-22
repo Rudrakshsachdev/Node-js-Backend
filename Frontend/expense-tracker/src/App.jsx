@@ -11,6 +11,7 @@ import AnalyticsPage from './components/Analytics/AnalyticsPage';
 
 import ForecastPage from './components/Forecast/ForecastPage';
 import AllowancePage from './components/Allowance/AllowancePage';
+import FreelancePage from './components/Freelance/FreelancePage';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/dashboard/analytics" element={<AnalyticsPage />} />
         <Route path="/dashboard/forecast" element={<ForecastPage />} />
         <Route path="/dashboard/allowance" element={<AllowancePage />} />
+        <Route path="/dashboard/freelance" element={<FreelancePage />} />
         
         {/* Fallback navigation redirects to onboarding */}
         <Route path="*" element={<Navigate to="/auth/onboarding" replace />} />
